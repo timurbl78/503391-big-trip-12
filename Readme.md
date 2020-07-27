@@ -2,7 +2,7 @@
 
 * Студент: [Тимур Белов](https://up.htmlacademy.ru/ecmascript/12/user/503391).
 * Наставник: [Артемий Бойков](https://htmlacademy.ru/profile/id607755).
-g
+
 ---
 
 _Не удаляйте и не изменяйте папки и файлы:_
