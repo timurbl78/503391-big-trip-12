@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Тимур Белов](https://up.htmlacademy.ru/ecmascript/12/user/503391).
-* Наставник: `Неизвестно`.
+* Наставник: [Артемий Бойков](https://htmlacademy.ru/profile/id607755).
 
 ---
 
