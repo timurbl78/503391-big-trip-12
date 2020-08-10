@@ -54,14 +54,14 @@ const generateAdditionalOptions = () => {
 
 const generateDestinationPhotos = () => {
   const numberOfPhotos = getRandomInteger(1, 6);
-  let eventPhotos = ``
+  let eventPhotos = ``;
 
-  for (let i = 0; i< numberOfPhotos; i++) {
-    eventPhotos = eventPhotos + `<img class="event__photo" src="http://picsum.photos/248/152?r=${Math.random()}" alt="Event photo">`
+  for (let i = 0; i < numberOfPhotos; i++) {
+    eventPhotos = eventPhotos + `<img class="event__photo" src="http://picsum.photos/248/152?r=${Math.random()}" alt="Event photo">`;
   }
 
   return eventPhotos;
-}
+};
 
 export const generateTripPoint = () => {
   const destinationInfo = generateDestinationInfo();
