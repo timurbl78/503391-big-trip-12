@@ -1,4 +1,4 @@
-import {TRIP_SOME} from "../const";
+import {TRIP_POINTS_MAP} from "../const";
 import {getRandomInteger} from "../utils";
 
 export const createDestinationBlock = (tripPoint) => {
@@ -17,9 +17,10 @@ export const createDestinationBlock = (tripPoint) => {
 
 const generateAdditionalOptions = (tripPoint) => {
   let options = ``;
-  for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
-    const option = tripPoint.additionalOptions[i];
-    options = options + `<div class="event__offer-selector">
+  if (tripPoint.additionalOptions != null) {
+    for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
+      const option = tripPoint.additionalOptions[i];
+      options = options + `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${getRandomInteger(0, 1) ? `checked` : ``}>
       <label class="event__offer-label" for="event-offer-luggage-1">
         <span class="event__offer-title">${option.name}</span>
@@ -27,24 +28,31 @@ const generateAdditionalOptions = (tripPoint) => {
         &euro;&nbsp;<span class="event__offer-price">${option.cost}</span>
       </label>
     </div>`;
+    }
   }
 
   return options;
 }
 
 export const createTripPointEditTemplate = (tripPoint) => {
-  const startMinutes = tripPoint.startDate.getMinutes();
-  const startHours = tripPoint.startDate.getHours();
-  const startDay = tripPoint.startDate.getDay();
-  const startMonth = tripPoint.startDate.getMonth();
-  const startYear = tripPoint.startDate.getFullYear() % 100;
+  let startDay = `01`, startHours = `00`, startMinutes = `00`, startMonth = `01`, startYear = `01`,
+    endDay = `01`, endHours = `00`, endMinutes = `00`, endMonth = `01`, endYear = `01`;
 
-  const endMinutes = tripPoint.endDate.getMinutes();
-  const endHours = tripPoint.endDate.getHours();
-  const endDay = tripPoint.endDate.getDay();
-  const endMonth = tripPoint.endDate.getMonth();
-  const endYear = tripPoint.endDate.getFullYear() % 100;
+  if (tripPoint.startDate !== null) {
+    startMinutes = tripPoint.startDate.getMinutes();
+    startHours = tripPoint.startDate.getHours();
+    startDay = tripPoint.startDate.getDay();
+    startMonth = tripPoint.startDate.getMonth();
+    startYear = tripPoint.startDate.getFullYear() % 100;
+  }
 
+  if (tripPoint.endDate !== null) {
+    endMinutes = tripPoint.endDate.getMinutes();
+    endHours = tripPoint.endDate.getHours();
+    endDay = tripPoint.endDate.getDay();
+    endMonth = tripPoint.endDate.getMonth();
+    endYear = tripPoint.endDate.getFullYear() % 100;
+  }
 
   const additionalOptions = generateAdditionalOptions(tripPoint);
   let destinationInfoBlock = ``;
@@ -126,7 +134,7 @@ export const createTripPointEditTemplate = (tripPoint) => {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${tripPoint.tripPointType} ${TRIP_SOME.get(tripPoint.tripPointType)}
+              ${tripPoint.tripPointType} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -153,7 +161,7 @@ export const createTripPointEditTemplate = (tripPoint) => {
               <span class="visually-hidden">Price</span>
               €
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost ? tripPoint.cost : 0}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
