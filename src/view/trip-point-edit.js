@@ -1,7 +1,7 @@
 import {TRIP_POINTS_MAP} from "../const";
 import {getRandomInteger} from "../utils";
 
-export const createDestinationBlock = (tripPoint) => {
+const createDestinationBlock = (tripPoint) => {
   return (
     `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -12,12 +12,30 @@ export const createDestinationBlock = (tripPoint) => {
         ${tripPoint.destinationPhotos}
       </div>
     </div>
-  </section>`)
-}
+  </section>`);
+};
+
+const createAdditionalOptionsBLock = (tripPoint) => {
+  const additionalOptions = generateAdditionalOptions(tripPoint);
+
+  if (additionalOptions !== ``) {
+    return (`
+  <section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+    <div class="event__available-offers">
+      ${additionalOptions}
+    </div>
+  </section>`);
+  }
+
+  return ``;
+};
+
 
 const generateAdditionalOptions = (tripPoint) => {
   let options = ``;
-  if (tripPoint.additionalOptions != null) {
+  if (tripPoint.additionalOptions !== null) {
     for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
       const option = tripPoint.additionalOptions[i];
       options = options + `<div class="event__offer-selector">
@@ -32,11 +50,27 @@ const generateAdditionalOptions = (tripPoint) => {
   }
 
   return options;
-}
+};
+
+const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) => {
+  return (
+    `<section class="event__details">
+      ${additionalOptionsBlock}
+      ${destinationInfoBlock}
+    </section>`);
+};
 
 export const createTripPointEditTemplate = (tripPoint) => {
-  let startDay = `01`, startHours = `00`, startMinutes = `00`, startMonth = `01`, startYear = `01`,
-    endDay = `01`, endHours = `00`, endMinutes = `00`, endMonth = `01`, endYear = `01`;
+  let startDay = `01`;
+  let startHours = `00`;
+  let startMinutes = `00`;
+  let startMonth = `01`;
+  let startYear = `01`;
+  let endDay = `01`;
+  let endHours = `00`;
+  let endMinutes = `00`;
+  let endMonth = `01`;
+  let endYear = `01`;
 
   if (tripPoint.startDate !== null) {
     startMinutes = tripPoint.startDate.getMinutes();
@@ -54,10 +88,16 @@ export const createTripPointEditTemplate = (tripPoint) => {
     endYear = tripPoint.endDate.getFullYear() % 100;
   }
 
-  const additionalOptions = generateAdditionalOptions(tripPoint);
+  const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
+
   let destinationInfoBlock = ``;
   if (tripPoint.destinationInfo !== ``) {
     destinationInfoBlock = createDestinationBlock(tripPoint);
+  }
+
+  let eventDetailsBlock = ``;
+  if (destinationInfoBlock !== `` || additionalOptionsBlock !== ``) {
+    eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
   }
 
   return (
@@ -180,16 +220,7 @@ export const createTripPointEditTemplate = (tripPoint) => {
           </button>
         </header>
 
-        <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${additionalOptions}
-            </div>
-          </section>
-          ${destinationInfoBlock}
-        </section>
+        ${eventDetailsBlock}
       </form>
     </li>`
   );
