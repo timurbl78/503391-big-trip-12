@@ -1,4 +1,4 @@
-import {TRIP_SOME} from "../const";
+import {TRIP_POINTS_MAP} from "../const";
 
 
 const generateAdditionalOptions = (tripPoint) => {
@@ -37,7 +37,7 @@ export const createTripPointTemplate = (tripPoint) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${tripPoint.tripPointType} ${TRIP_SOME.get(tripPoint.tripPointType)} ${tripPoint.destination}</h3>
+        <h3 class="event__title">${tripPoint.tripPointType} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)} ${tripPoint.destination}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
