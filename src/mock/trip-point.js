@@ -1,10 +1,12 @@
-import {TRIP_POINTS, TOWNS} from "../const";
 import {generateRandomListItem, getRandomInteger} from "../utils";
 import {generateAdditionalOption} from "./additional-option";
 
+const TOWNS = [`Moscow`, `Dubai`, `Berlin`, `New York`, `Colombo`, `Sochi`];
+const TRIP_POINT_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
+
 const MAX_ADDITIONAL_OPTIONS = 5;
 
-const RANDOM_TEXT = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
+const RANDOM_TEXTS = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
   `Cras aliquet varius magna, non porta ligula feugiat eget. `,
   `Fusce tristique felis at fermentum pharetra. `,
   `Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. `,
@@ -70,7 +72,7 @@ export const generateTripPoint = () => {
     destinationPhotos = generateDestinationPhotos();
   }
   return {
-    tripPointType: generateRandomListItem(TRIP_POINTS),
+    tripPointType: generateRandomListItem(TRIP_POINT_TYPES),
     destination: generateRandomListItem(TOWNS),
     destinationInfo,
     destinationPhotos,
