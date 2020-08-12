@@ -33,8 +33,7 @@ render(siteTripEventsElement, new SortMenuView().getElement(), `beforeend`);
 render(siteTripEventsElement, new TripEventsListView().getElement(), `beforeend`);
 
 const siteTripEventsListElement = siteTripEventsElement.querySelector(`.trip-events__list`);
-render(siteTripEventsListElement, new TripPointEditView(tripPoints[0]).getElement(), `beforeend`);
 
-for (let i = 1; i < EVENTS_COUNT; i++) {
+for (let i = 0; i < EVENTS_COUNT; i++) {
   render(siteTripEventsListElement, new TripPointView(tripPoints[i]).getElement(), `beforeend`);
 }
