@@ -18,7 +18,7 @@ export default class TotalCost {
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalCost}</span>
     </p>`
     );
-  };
+  }
 
   _getTemplate() {
     return this._createTotalCostTemplate(this._tripPoints);

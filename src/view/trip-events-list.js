@@ -9,7 +9,7 @@ export default class TripEventsList {
     return (
       `<ul class="trip-events__list"></ul>`
     );
-  };
+  }
 
   _getTemplate() {
     return this._createTripEventsList();

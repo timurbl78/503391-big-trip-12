@@ -15,7 +15,7 @@ export default class TripMainInfo {
       </div>
     </section>`
     );
-  };
+  }
 
   _getTemplate() {
     return this._createTripMainInfoTemplate();

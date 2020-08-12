@@ -12,7 +12,7 @@ export default class MainMenu {
         <a class="trip-tabs__btn" href="#">Stats</a>
       </nav>`
     );
-  };
+  }
 
   _getTemplate() {
     return this._createMainMenuTemplate();
