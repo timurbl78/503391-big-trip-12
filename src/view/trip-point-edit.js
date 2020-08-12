@@ -1,5 +1,5 @@
 import {TRIP_POINTS_MAP} from "../const";
-import {getRandomInteger} from "../utils";
+import {getRandomInteger, createElement} from "../utils";
 
 const createDestinationBlock = (tripPoint) => {
   return (
@@ -32,7 +32,6 @@ const createAdditionalOptionsBLock = (tripPoint) => {
   return ``;
 };
 
-
 const generateAdditionalOptions = (tripPoint) => {
   let options = ``;
   if (tripPoint.additionalOptions !== null) {
@@ -60,48 +59,54 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
-export const createTripPointEditTemplate = (tripPoint) => {
-  let startDay = `01`;
-  let startHours = `00`;
-  let startMinutes = `00`;
-  let startMonth = `01`;
-  let startYear = `01`;
-  let endDay = `01`;
-  let endHours = `00`;
-  let endMinutes = `00`;
-  let endMonth = `01`;
-  let endYear = `01`;
-
-  if (tripPoint.startDate !== null) {
-    startMinutes = tripPoint.startDate.getMinutes();
-    startHours = tripPoint.startDate.getHours();
-    startDay = tripPoint.startDate.getDay();
-    startMonth = tripPoint.startDate.getMonth();
-    startYear = tripPoint.startDate.getFullYear() % 100;
+export default class TripPointEdit {
+  constructor(tripPoint) {
+    this._element = null;
+    this._tripPoint = tripPoint;
   }
 
-  if (tripPoint.endDate !== null) {
-    endMinutes = tripPoint.endDate.getMinutes();
-    endHours = tripPoint.endDate.getHours();
-    endDay = tripPoint.endDate.getDay();
-    endMonth = tripPoint.endDate.getMonth();
-    endYear = tripPoint.endDate.getFullYear() % 100;
-  }
+  _createTripPointEditTemplate(tripPoint) {
+    let startDay = `01`;
+    let startHours = `00`;
+    let startMinutes = `00`;
+    let startMonth = `01`;
+    let startYear = `01`;
+    let endDay = `01`;
+    let endHours = `00`;
+    let endMinutes = `00`;
+    let endMonth = `01`;
+    let endYear = `01`;
 
-  const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
+    if (tripPoint.startDate !== null) {
+      startMinutes = tripPoint.startDate.getMinutes();
+      startHours = tripPoint.startDate.getHours();
+      startDay = tripPoint.startDate.getDay();
+      startMonth = tripPoint.startDate.getMonth();
+      startYear = tripPoint.startDate.getFullYear() % 100;
+    }
 
-  let destinationInfoBlock = ``;
-  if (tripPoint.destinationInfo !== ``) {
-    destinationInfoBlock = createDestinationBlock(tripPoint);
-  }
+    if (tripPoint.endDate !== null) {
+      endMinutes = tripPoint.endDate.getMinutes();
+      endHours = tripPoint.endDate.getHours();
+      endDay = tripPoint.endDate.getDay();
+      endMonth = tripPoint.endDate.getMonth();
+      endYear = tripPoint.endDate.getFullYear() % 100;
+    }
 
-  let eventDetailsBlock = ``;
-  if (destinationInfoBlock !== `` || additionalOptionsBlock !== ``) {
-    eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
-  }
+    const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
 
-  return (
-    `<li class="trip-events__item">
+    let destinationInfoBlock = ``;
+    if (tripPoint.destinationInfo !== ``) {
+      destinationInfoBlock = createDestinationBlock(tripPoint);
+    }
+
+    let eventDetailsBlock = ``;
+    if (destinationInfoBlock !== `` || additionalOptionsBlock !== ``) {
+      eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
+    }
+
+    return (
+      `<li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -223,5 +228,22 @@ export const createTripPointEditTemplate = (tripPoint) => {
         ${eventDetailsBlock}
       </form>
     </li>`
-  );
-};
+    );
+  }
+
+  _getTemplate() {
+    return this._createTripPointEditTemplate(this._tripPoint);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
