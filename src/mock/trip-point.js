@@ -23,8 +23,8 @@ const generateDestinationInfo = () => {
 
   let destinationInfo = ``;
   for (let i = 0; i < sentenceCount; i++) {
-    let randomIndex = getRandomInteger(0, RANDOM_TEXT.length - 1);
-    destinationInfo = destinationInfo + RANDOM_TEXT[randomIndex];
+    let randomIndex = getRandomInteger(0, RANDOM_TEXTS.length - 1);
+    destinationInfo = destinationInfo + RANDOM_TEXTS[randomIndex];
   }
 
   return destinationInfo;
