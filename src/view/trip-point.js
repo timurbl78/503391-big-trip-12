@@ -1,5 +1,5 @@
 import {TRIP_POINTS_MAP} from "../const";
-
+import {createElement} from "../utils";
 
 const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;
@@ -17,22 +17,28 @@ const generateAdditionalOptions = (tripPoint) => {
   return additionalOptions;
 };
 
-export const createTripPointTemplate = (tripPoint) => {
-  const startMinutes = tripPoint.startDate.getMinutes();
-  const startHours = tripPoint.startDate.getHours();
-  const startDay = tripPoint.startDate.getDay();
-  const startMonth = tripPoint.startDate.getMonth();
-  const startYear = tripPoint.startDate.getFullYear();
+export default class TripPoint {
+  constructor(tripPoint) {
+    this._element = null;
+    this._tripPoint = tripPoint;
+  }
 
-  const endMinutes = tripPoint.endDate.getMinutes();
-  const endHours = tripPoint.endDate.getHours();
-  const endDay = tripPoint.endDate.getDay();
-  const endMonth = tripPoint.endDate.getMonth();
-  const endYear = tripPoint.endDate.getFullYear();
+  _createTripPointTemplate(tripPoint) {
+    const startMinutes = tripPoint.startDate.getMinutes();
+    const startHours = tripPoint.startDate.getHours();
+    const startDay = tripPoint.startDate.getDay();
+    const startMonth = tripPoint.startDate.getMonth();
+    const startYear = tripPoint.startDate.getFullYear();
 
-  const additionalOptions = generateAdditionalOptions(tripPoint);
-  return (
-    `<li class="trip-events__item">
+    const endMinutes = tripPoint.endDate.getMinutes();
+    const endHours = tripPoint.endDate.getHours();
+    const endDay = tripPoint.endDate.getDay();
+    const endMonth = tripPoint.endDate.getMonth();
+    const endYear = tripPoint.endDate.getFullYear();
+
+    const additionalOptions = generateAdditionalOptions(tripPoint);
+    return (
+      `<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon">
@@ -66,5 +72,23 @@ export const createTripPointTemplate = (tripPoint) => {
         </button>
       </div>
     </li>`
-  );
-};
+    );
+  }
+
+  _getTemplate() {
+    return this._createTripPointTemplate(this._tripPoint);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
