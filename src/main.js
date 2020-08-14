@@ -6,6 +6,7 @@ import SortMenuView from "./view/sort-menu";
 import TripEventsListView from "./view/trip-events-list";
 import TripPointEditView from "./view/trip-point-edit";
 import TripPointView from "./view/trip-point";
+import NoPointsView from "./view/no-points";
 import {generateTripPoint} from "./mock/trip-point";
 import {render, RenderPosition} from "./utils";
 
@@ -45,6 +46,24 @@ const renderTripPoint = (tripPointListElement, tripPoint) => {
   render(tripPointListElement, tripPointComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
+const renderBoard = (tripPoints) => {
+  const sitePageMainElement = document.querySelector(`.page-main`);
+  const siteTripEventsElement = sitePageMainElement.querySelector(`.trip-events`);
+
+  if (tripPoints.length === 0) {
+    render(siteTripEventsElement, new NoPointsView().getElement(), RenderPosition.BEFOREEND)
+  } else {
+    render(siteTripEventsElement, new SortMenuView().getElement(), RenderPosition.BEFOREEND);
+    render(siteTripEventsElement, new TripEventsListView().getElement(), RenderPosition.BEFOREEND);
+
+    const siteTripEventsListElement = siteTripEventsElement.querySelector(`.trip-events__list`);
+
+    for (let i = 0; i < EVENTS_COUNT; i++) {
+      renderTripPoint(siteTripEventsListElement, tripPoints[i]);
+    }
+  }
+}
+
 const tripPoints = new Array(EVENTS_COUNT).fill().map(generateTripPoint);
 
 const siteTripMainElement = document.querySelector(`.trip-main`);
@@ -60,14 +79,4 @@ render(siteTripControlsElement, mainMenuElement.getElement(), RenderPosition.AFT
 render(siteTripControlsElement, mainMenuElement.getHeading(), RenderPosition.AFTERBEGIN);
 render(siteTripControlsElement, filtersElement.getHeading(), RenderPosition.BEFOREEND);
 render(siteTripControlsElement, filtersElement.getElement(), RenderPosition.BEFOREEND);
-
-const sitePageMainElement = document.querySelector(`.page-main`);
-const siteTripEventsElement = sitePageMainElement.querySelector(`.trip-events`);
-render(siteTripEventsElement, new SortMenuView().getElement(), `beforeend`);
-render(siteTripEventsElement, new TripEventsListView().getElement(), `beforeend`);
-
-const siteTripEventsListElement = siteTripEventsElement.querySelector(`.trip-events__list`);
-
-for (let i = 0; i < EVENTS_COUNT; i++) {
-  renderTripPoint(siteTripEventsListElement, tripPoints[i]);
-}
+renderBoard(tripPoints);
