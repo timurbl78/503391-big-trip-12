@@ -8,7 +8,7 @@ import TripPointEditView from "./view/trip-point-edit";
 import TripPointView from "./view/trip-point";
 import NoPointsView from "./view/no-points";
 import {generateTripPoint} from "./mock/trip-point";
-import {render, RenderPosition} from "./utils";
+import {render, RenderPosition} from "./utils/render";
 
 const EVENTS_COUNT = 20;
 

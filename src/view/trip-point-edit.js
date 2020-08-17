@@ -1,5 +1,6 @@
 import {TRIP_POINTS_MAP} from "../const";
-import {getRandomInteger, createElement} from "../utils";
+import {createElement} from "../utils/render";
+import {getRandomInteger} from "../utils/common";
 
 const createDestinationBlock = (tripPoint) => {
   return (

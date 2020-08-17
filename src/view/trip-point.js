@@ -1,5 +1,5 @@
 import {TRIP_POINTS_MAP} from "../const";
-import {createElement} from "../utils";
+import {createElement} from "../utils/render";
 
 const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;

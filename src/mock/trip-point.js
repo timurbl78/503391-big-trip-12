@@ -1,4 +1,4 @@
-import {generateRandomListItem, getRandomInteger} from "../utils";
+import {generateRandomListItem, getRandomInteger} from "../utils/common";
 import {generateAdditionalOption} from "./additional-option";
 
 const TOWNS = [`Moscow`, `Dubai`, `Berlin`, `New York`, `Colombo`, `Sochi`];
