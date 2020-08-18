@@ -1,10 +1,7 @@
+import AbstractView from "./abstract";
 import {createElement} from "../utils/render";
 
-export default class MainMenu {
-  constructor() {
-    this._element = null;
-  }
-
+export default class MainMenu extends AbstractView {
   _createMainMenuTemplate() {
     return (
       `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -20,17 +17,5 @@ export default class MainMenu {
 
   getHeading() {
     return createElement(`<h2 class="visually-hidden">Switch trip view</h2>`);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

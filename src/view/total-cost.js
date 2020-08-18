@@ -1,8 +1,8 @@
-import {createElement} from "../utils/render";
+import AbstractView from "./abstract";
 
-export default class TotalCost {
+export default class TotalCost extends AbstractView {
   constructor(tripPoints) {
-    this._element = null;
+    super();
     this._tripPoints = tripPoints;
   }
 
@@ -22,17 +22,5 @@ export default class TotalCost {
 
   _getTemplate() {
     return this._createTotalCostTemplate(this._tripPoints);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

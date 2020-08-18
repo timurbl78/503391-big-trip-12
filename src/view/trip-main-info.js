@@ -1,10 +1,6 @@
-import {createElement} from "../utils/render";
+import AbstractView from "./abstract";
 
-export default class TripMainInfo {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripMainInfo extends AbstractView {
   _createTripMainInfoTemplate() {
     return (
       `<section class="trip-main__trip-info  trip-info">
@@ -19,17 +15,5 @@ export default class TripMainInfo {
 
   _getTemplate() {
     return this._createTripMainInfoTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

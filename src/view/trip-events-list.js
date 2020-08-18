@@ -1,10 +1,6 @@
-import {createElement} from "../utils/render";
+import AbstractView from "./abstract";
 
-export default class TripEventsList {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripEventsList extends AbstractView {
   _createTripEventsList() {
     return (
       `<ul class="trip-events__list"></ul>`
@@ -13,17 +9,5 @@ export default class TripEventsList {
 
   _getTemplate() {
     return this._createTripEventsList();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
