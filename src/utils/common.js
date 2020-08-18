@@ -9,4 +9,4 @@ export const generateRandomListItem = (list) => {
   const randomIndex = getRandomInteger(0, list.length - 1);
 
   return list[randomIndex];
-}
+};
