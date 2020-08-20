@@ -1,5 +1,6 @@
+import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
-import {getRandomInteger, createElement} from "../utils";
+import {getRandomInteger} from "../utils/common";
 
 const createDestinationBlock = (tripPoint) => {
   return (
@@ -59,10 +60,22 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
-export default class TripPointEdit {
+export default class TripPointEdit extends AbstractView {
   constructor(tripPoint) {
-    this._element = null;
+    super();
     this._tripPoint = tripPoint;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`.event`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
   _createTripPointEditTemplate(tripPoint) {
@@ -233,17 +246,5 @@ export default class TripPointEdit {
 
   _getTemplate() {
     return this._createTripPointEditTemplate(this._tripPoint);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

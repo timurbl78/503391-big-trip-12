@@ -1,10 +1,6 @@
-import {createElement} from "../utils";
+import AbstractView from "./abstract";
 
-export default class SortMenu {
-  constructor() {
-    this._element = null;
-  }
-
+export default class SortMenu extends AbstractView {
   _createSortMenuTemplate() {
     return (
       `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -36,17 +32,5 @@ export default class SortMenu {
 
   _getTemplate() {
     return this._createSortMenuTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

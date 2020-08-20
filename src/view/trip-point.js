@@ -1,5 +1,5 @@
+import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
-import {createElement} from "../utils";
 
 const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;
@@ -17,10 +17,22 @@ const generateAdditionalOptions = (tripPoint) => {
   return additionalOptions;
 };
 
-export default class TripPoint {
+export default class TripPoint extends AbstractView {
   constructor(tripPoint) {
-    this._element = null;
+    super();
     this._tripPoint = tripPoint;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
   }
 
   _createTripPointTemplate(tripPoint) {
@@ -77,18 +89,6 @@ export default class TripPoint {
 
   _getTemplate() {
     return this._createTripPointTemplate(this._tripPoint);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
