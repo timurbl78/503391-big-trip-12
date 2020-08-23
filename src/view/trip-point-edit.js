@@ -1,6 +1,5 @@
-import AbstractView from "./abstract";
+import SmartView from "./smart";
 import {TRIP_POINTS_MAP} from "../const";
-import {getRandomInteger} from "../utils/common";
 
 const createDestinationBlock = (tripPoint) => {
   return (
@@ -39,7 +38,7 @@ const generateAdditionalOptions = (tripPoint) => {
     for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
       const option = tripPoint.additionalOptions[i];
       options = options + `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${getRandomInteger(0, 1) ? `checked` : ``}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
       <label class="event__offer-label" for="event-offer-luggage-1">
         <span class="event__offer-title">${option.name}</span>
         &plus;
@@ -60,22 +59,65 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
-export default class TripPointEdit extends AbstractView {
-  constructor(tripPoint) {
+export default class TripPointEdit extends SmartView {
+  constructor(data) {
     super();
-    this._tripPoint = tripPoint;
+    this._data = data;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._costInputHandler = this._costInputHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._data);
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    })
+  }
+
+  _costInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      cost: evt.target.value
+    }, true);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector(`.event`).addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  reset(tripPoint) {
+    this.updateData(
+      tripPoint
+    );
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, this._favoriteClickHandler)
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._costInputHandler);
   }
 
   _createTripPointEditTemplate(tripPoint) {
@@ -225,7 +267,7 @@ export default class TripPointEdit extends AbstractView {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked="">
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${tripPoint.isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -245,6 +287,6 @@ export default class TripPointEdit extends AbstractView {
   }
 
   _getTemplate() {
-    return this._createTripPointEditTemplate(this._tripPoint);
+    return this._createTripPointEditTemplate(this._data);
   }
 }
