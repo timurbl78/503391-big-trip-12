@@ -17,6 +17,7 @@ const RANDOM_TEXTS = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
   `Nunc fermentum tortor ac porta dapibus. `,
   `In rutrum ac purus sit amet tempus. `];
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateDestinationInfo = () => {
   const sentenceCount = getRandomInteger(0, 5);
@@ -72,6 +73,7 @@ export const generateTripPoint = () => {
     destinationPhotos = generateDestinationPhotos();
   }
   return {
+    id: generateId(),
     tripPointType: generateRandomListItem(TRIP_POINT_TYPES),
     destination: generateRandomListItem(TOWNS),
     destinationInfo,
@@ -80,5 +82,6 @@ export const generateTripPoint = () => {
     endDate: generateDate(),
     cost: getRandomInteger(100, 10000),
     additionalOptions: generateAdditionalOptions(),
+    isFavorite: false,
   };
 };
