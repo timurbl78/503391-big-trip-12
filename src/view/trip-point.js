@@ -1,10 +1,12 @@
 import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
 
+const MAX_ADDITIONAL_OPTIONS = 3;
+
 const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;
 
-  for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
+  for (let i = 0; i < Math.min(tripPoint.additionalOptions.length, MAX_ADDITIONAL_OPTIONS); i++) {
     const option = tripPoint.additionalOptions[i];
     additionalOptions = additionalOptions +
       `<li class="event__offer">
@@ -48,6 +50,34 @@ export default class TripPoint extends AbstractView {
     const endMonth = tripPoint.endDate.getMonth();
     const endYear = tripPoint.endDate.getFullYear();
 
+    let dateDiff = tripPoint.endDate - tripPoint.startDate;
+    const daysDiff = Math.floor(dateDiff / (24 * 60 * 60 * 1000));
+    dateDiff -= daysDiff * (24 * 60 * 60 * 1000);
+    const hoursDiff = Math.floor(dateDiff / (1000 * 60 * 60));
+    dateDiff -= hoursDiff * (60 * 60 * 1000);
+    const minutesDiff = Math.floor(dateDiff / (60 * 1000));
+
+    let dateDiffString = ``;
+    if (daysDiff) {
+      if (daysDiff < 10) {
+        dateDiffString += `0` + daysDiff + `D `;
+      } else {
+        dateDiffString += daysDiff + `D `;
+      }
+    }
+    if (hoursDiff) {
+      if (hoursDiff < 10) {
+        dateDiffString += `0` + hoursDiff + `H `;
+      } else {
+        dateDiffString += hoursDiff + `H `;
+      }
+    }
+    if (minutesDiff < 10) {
+      dateDiffString += `0` + minutesDiff + `M`;
+    } else {
+      dateDiffString += minutesDiff + `M`;
+    }
+
     const additionalOptions = generateAdditionalOptions(tripPoint);
     return (
       `<li class="trip-events__item">
@@ -67,7 +97,7 @@ export default class TripPoint extends AbstractView {
             datetime="${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}">
               ${endHours}:${endMinutes}</time>
           </p>
-          <p class="event__duration">30M</p>
+          <p class="event__duration">${dateDiffString}</p>
         </div>
 
         <p class="event__price">
