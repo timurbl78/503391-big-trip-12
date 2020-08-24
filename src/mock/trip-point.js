@@ -80,7 +80,7 @@ export const generateTripPoint = () => {
     destinationPhotos,
     startDate: generateDate(),
     endDate: generateDate(),
-    cost: getRandomInteger(100, 10000),
+    cost: getRandomInteger(50, 300),
     additionalOptions: generateAdditionalOptions(),
     isFavorite: false,
   };
