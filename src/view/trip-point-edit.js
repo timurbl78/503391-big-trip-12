@@ -94,7 +94,7 @@ export default class TripPointEdit extends SmartView {
         this.getElement().querySelector(`#event-start-time-1`),
         {
           enableTime: true,
-          dateFormat: `d-m-y H:i`,
+          dateFormat: `d/m/y H:i`,
           defaultDate: this._data.startDate,
           onChange: this._startDateChangeHandler
         }
@@ -113,7 +113,7 @@ export default class TripPointEdit extends SmartView {
         this.getElement().querySelector(`#event-end-time-1`),
         {
           enableTime: true,
-          dateFormat: `d-m-y H:i`,
+          dateFormat: `d/m/Y H:i`,
           defaultDate: this._data.endDate,
           onChange: this._endDateChangeHandler
         }
