@@ -1,5 +1,8 @@
 import SmartView from "./smart";
 import {TRIP_POINTS_MAP} from "../const";
+import flatpickr from "flatpickr";
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const createDestinationBlock = (tripPoint) => {
   return (
@@ -63,12 +66,59 @@ export default class TripPointEdit extends SmartView {
   constructor(data) {
     super();
     this._data = data;
+    this._datepickerStartDate = null;
+    this._datepickerEndDate = null;
 
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._defaultClickHandler = this._defaultClickHandler.bind(this);
     this._costInputHandler = this._costInputHandler.bind(this);
+    this._destinationInputHandler = this._destinationInputHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepickerStartDate();
+    this._setDatepickerEndDate();
+  }
+
+  // TODO: by className
+  _setDatepickerStartDate() {
+    if (this._datepickerStartDate) {
+      this._datepickerStartDate.destroy();
+      this._datepickerStartDate = null;
+    }
+
+    if (this._data.startDate) {
+      this._datepickerStartDate = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `d-m-y H:i`,
+          defaultDate: this._data.startDate,
+          onChange: this._startDateChangeHandler
+        }
+      );
+    }
+  }
+
+  _setDatepickerEndDate() {
+    if (this._datepickerEndDate) {
+      this._datepickerEndDate.destroy();
+      this._datepickerEndDate = null;
+    }
+
+    if (this._data.endDate) {
+      this._datepickerEndDate = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `d-m-y H:i`,
+          defaultDate: this._data.endDate,
+          onChange: this._endDateChangeHandler
+        }
+      );
+    }
   }
 
   _formSubmitHandler(evt) {
@@ -90,6 +140,35 @@ export default class TripPointEdit extends SmartView {
     }, true);
   }
 
+  _destinationInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      destination: evt.target.value
+    }, true);
+  }
+
+  _startDateChangeHandler([userDate]) {
+    this.updateData({
+      startDate: userDate
+    });
+  }
+
+  _endDateChangeHandler([userDate]) {
+    this.updateData({
+      endDate: userDate
+    });
+  }
+
+  _defaultClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.defaultClick();
+  }
+
+  setDefaultClickHandler(callback) {
+    this._callback.defaultClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._defaultClickHandler);
+  }
+
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
@@ -102,6 +181,8 @@ export default class TripPointEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepickerStartDate();
+    this._setDatepickerEndDate();
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
@@ -118,6 +199,12 @@ export default class TripPointEdit extends SmartView {
     this.getElement()
       .querySelector(`.event__input--price`)
       .addEventListener(`input`, this._costInputHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`input`, this._destinationInputHandler);
+    this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._defaultClickHandler);
   }
 
   _createTripPointEditTemplate(tripPoint) {
