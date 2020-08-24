@@ -18,6 +18,7 @@ export default class TripPoint {
     this._mode = Mode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleDefaultClick = this._handleDefaultClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -31,7 +32,8 @@ export default class TripPoint {
     this._tripPointComponent = new TripPointView(tripPoint);
     this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
-    this._tripPointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick)
+    this._tripPointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._tripPointEditComponent.setDefaultClickHandler(this._handleDefaultClick);
     this._tripPointComponent.setEditClickHandler(this._handleEditClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
@@ -63,6 +65,11 @@ export default class TripPoint {
     }
   }
 
+  _handleDefaultClick() {
+    this._tripPointEditComponent.reset(this._tripPoint);
+    this._replaceFormToCard();
+  }
+
   _handleEditClick() {
     this._replaceCardToForm();
   }
@@ -70,6 +77,16 @@ export default class TripPoint {
   _handleFormSubmit(task) {
     this._changeData(task);
     this._replaceFormToCard();
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(Object.assign(
+      {},
+      this._tripPoint,
+      {
+        isFavorite: !this._tripPoint.isFavorite
+      }
+    ));
   }
 
   _escKeyDownHandler(evt) {
