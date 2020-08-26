@@ -1,22 +1,52 @@
 import SmartView from "./smart";
-import {TRIP_POINTS_MAP} from "../const";
+import {TOWNS_PHOTOS, TOWNS_DESCRIPTION} from "../mock/trip-point";
+import {TRIP_POINTS_MAP, TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES} from "../const";
 import flatpickr from "flatpickr";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+import {OFFERS_TYPE} from "../mock/additional-option";
 
 const createDestinationBlock = (tripPoint) => {
   return (
     `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${tripPoint.destinationInfo}</p>
+    <p class="event__destination-description">${tripPoint.description}</p>
 
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${tripPoint.destinationPhotos}
+        ${tripPoint.photos}
       </div>
     </div>
   </section>`);
 };
+
+const createEventActivityBlock = (tripPoint) => {
+  let block = ``;
+
+  for (let i = 0; i < TRIP_POINT_ACTIVITIES_TYPE.length; i++) {
+    let type = TRIP_POINT_ACTIVITIES_TYPE[i];
+    block +=
+      `<div class="event__type-item">
+        <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
+      </div>`
+  }
+
+  return block;
+}
+
+const createEventTransferBlock = (tripPoint) => {
+  let block = ``;
+  for (let i = 0; i < TRIP_POINT_TRANSFER_TYPES.length; i++) {
+    let type = TRIP_POINT_TRANSFER_TYPES[i];
+    block +=
+      `<div class="event__type-item">
+        <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
+      </div>`
+  }
+  return block;
+}
 
 const createAdditionalOptionsBLock = (tripPoint) => {
   const additionalOptions = generateAdditionalOptions(tripPoint);
@@ -76,6 +106,7 @@ export default class TripPointEdit extends SmartView {
     this._costInputHandler = this._costInputHandler.bind(this);
     this._destinationInputHandler = this._destinationInputHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._typeNameRadioHandler = this._typeNameRadioHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepickerStartDate();
@@ -143,8 +174,24 @@ export default class TripPointEdit extends SmartView {
   _destinationInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      destination: evt.target.value
+      destination: evt.target.value,
+      photos: TOWNS_PHOTOS.get(evt.target.value),
+      description: TOWNS_DESCRIPTION.get(evt.target.value)
     }, true);
+
+    if (TOWNS_DESCRIPTION.has(evt.target.value)) {
+      this.updateData({
+        photos: TOWNS_PHOTOS.get(evt.target.value),
+        description: TOWNS_DESCRIPTION.get(evt.target.value)
+      })
+    }
+  }
+
+  _typeNameRadioHandler(evt) {
+    this.updateData({
+      tripPointType: evt.target.value,
+      additionalOptions: OFFERS_TYPE.get(evt.target.value)
+    })
   }
 
   _startDateChangeHandler([userDate]) {
@@ -205,6 +252,12 @@ export default class TripPointEdit extends SmartView {
     this.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, this._defaultClickHandler);
+    const radios = this
+      .getElement()
+      .querySelectorAll(`input[name="event-type"]`)
+    for (let i = 0; i < radios.length; i++) {
+      radios[i].addEventListener(`click`, this._typeNameRadioHandler);
+    }
   }
 
   _createTripPointEditTemplate(tripPoint) {
@@ -235,15 +288,18 @@ export default class TripPointEdit extends SmartView {
       endYear = tripPoint.endDate.getFullYear() % 100;
     }
 
+    const eventTransferBlock = createEventTransferBlock(tripPoint);
+    const eventActivityBlock = createEventActivityBlock(tripPoint);
+
     const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
 
     let destinationInfoBlock = ``;
-    if (tripPoint.destinationInfo !== ``) {
+    if (TOWNS_DESCRIPTION.get(tripPoint.destination) !== undefined) {
       destinationInfoBlock = createDestinationBlock(tripPoint);
     }
 
     let eventDetailsBlock = ``;
-    if (destinationInfoBlock !== `` || additionalOptionsBlock !== ``) {
+    if (destinationInfoBlock !== undefined || additionalOptionsBlock !== undefined) {
       eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
     }
 
@@ -261,73 +317,30 @@ export default class TripPointEdit extends SmartView {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Transfer</legend>
-
-                <div class="event__type-item">
-                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-                  <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                  <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-                  <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
-                  <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-                  <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked="">
-                  <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-                </div>
+                ${eventTransferBlock}
               </fieldset>
 
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Activity</legend>
 
-                <div class="event__type-item">
-                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-                  <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-                  <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-                  <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-                </div>
+                ${eventActivityBlock}
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${tripPoint.tripPointType} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
+              ${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              <option value="Berlin"></option>
+              <option value="Colombo"></option>
+              <option value="Novosibirsk"></option>
+              <option value="Moscow"></option>
+              <option value="Kazan"></option>
             </datalist>
           </div>
 
