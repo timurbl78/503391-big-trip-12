@@ -1,11 +1,8 @@
 import {generateRandomListItem, getRandomInteger} from "../utils/common";
-import {generateAdditionalOption} from "./additional-option";
+import {OFFERS_TYPE} from "./additional-option";
 
-const TOWNS = [`Moscow`, `Dubai`, `Berlin`, `New York`, `Colombo`, `Sochi`];
-const TRIP_POINT_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
-
-const MAX_ADDITIONAL_OPTIONS = 5;
-
+const TRIP_POINT_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+const TOWNS = [`Amsterdam`, `Geneva`, `Berlin`, `Colombo`, `Novosibirsk`, `Moscow`, `Kazan`];
 const RANDOM_TEXTS = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
   `Cras aliquet varius magna, non porta ligula feugiat eget. `,
   `Fusce tristique felis at fermentum pharetra. `,
@@ -16,8 +13,6 @@ const RANDOM_TEXTS = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
   `Aliquam erat volutpat. `,
   `Nunc fermentum tortor ac porta dapibus. `,
   `In rutrum ac purus sit amet tempus. `];
-
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateDestinationInfo = () => {
   const sentenceCount = getRandomInteger(0, 5);
@@ -31,6 +26,39 @@ const generateDestinationInfo = () => {
   return destinationInfo;
 };
 
+const generateDestinationPhotos = () => {
+  const numberOfPhotos = getRandomInteger(1, 6);
+  let eventPhotos = ``;
+
+  for (let i = 0; i < numberOfPhotos; i++) {
+    eventPhotos = eventPhotos + `<img class="event__photo" src="http://picsum.photos/248/152?r=${Math.random()}" alt="Event photo">`;
+  }
+
+  return eventPhotos;
+};
+
+export const TOWNS_DESCRIPTION = new Map([
+  [`Amsterdam`, generateDestinationInfo()],
+  [`Geneva`, generateDestinationInfo()],
+  [`Colombo`, generateDestinationInfo()],
+  [`Berlin`, generateDestinationInfo()],
+  [`Novosibirsk`, generateDestinationInfo()],
+  [`Moscow`, generateDestinationInfo()],
+  [`Kazan`, generateDestinationInfo()]
+])
+
+export const TOWNS_PHOTOS = new Map([
+  [`Amsterdam`, generateDestinationPhotos()],
+  [`Geneva`, generateDestinationPhotos()],
+  [`Colombo`, generateDestinationPhotos()],
+  [`Berlin`, generateDestinationPhotos()],
+  [`Novosibirsk`, generateDestinationPhotos()],
+  [`Moscow`, generateDestinationPhotos()],
+  [`Kazan`, generateDestinationPhotos()]
+]);
+
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateDate = () => {
   const maxDaysGap = 7;
   const daysGap = getRandomInteger(1, maxDaysGap);
@@ -43,45 +71,20 @@ const generateDate = () => {
   return new Date(currentDate);
 };
 
-const generateAdditionalOptions = () => {
-  const randomNumber = getRandomInteger(1, MAX_ADDITIONAL_OPTIONS);
-
-  let options = [];
-
-  for (let i = 0; i < randomNumber; i++) {
-    options.push(generateAdditionalOption());
-  }
-
-  return options;
-};
-
-const generateDestinationPhotos = () => {
-  const numberOfPhotos = getRandomInteger(1, 6);
-  let eventPhotos = ``;
-
-  for (let i = 0; i < numberOfPhotos; i++) {
-    eventPhotos = eventPhotos + `<img class="event__photo" src="http://picsum.photos/248/152?r=${Math.random()}" alt="Event photo">`;
-  }
-
-  return eventPhotos;
-};
-
 export const generateTripPoint = () => {
-  const destinationInfo = generateDestinationInfo();
-  let destinationPhotos = [];
-  if (destinationInfo !== ``) {
-    destinationPhotos = generateDestinationPhotos();
-  }
+  const destination = generateRandomListItem(TOWNS);
+  const tripPointType = generateRandomListItem(TRIP_POINT_TYPES);
+
   return {
     id: generateId(),
-    tripPointType: generateRandomListItem(TRIP_POINT_TYPES),
-    destination: generateRandomListItem(TOWNS),
-    destinationInfo,
-    destinationPhotos,
+    tripPointType,
+    destination,
     startDate: generateDate(),
     endDate: generateDate(),
     cost: getRandomInteger(50, 300),
-    additionalOptions: generateAdditionalOptions(),
+    description: TOWNS_DESCRIPTION.get(destination),
+    photos: TOWNS_PHOTOS.get(destination),
+    additionalOptions: OFFERS_TYPE.get(tripPointType),
     isFavorite: false,
   };
 };
