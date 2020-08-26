@@ -29,11 +29,11 @@ const createEventActivityBlock = (tripPoint) => {
       `<div class="event__type-item">
         <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
-      </div>`
+      </div>`;
   }
 
   return block;
-}
+};
 
 const createEventTransferBlock = (tripPoint) => {
   let block = ``;
@@ -43,10 +43,10 @@ const createEventTransferBlock = (tripPoint) => {
       `<div class="event__type-item">
         <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
-      </div>`
+      </div>`;
   }
   return block;
-}
+};
 
 const createAdditionalOptionsBLock = (tripPoint) => {
   const additionalOptions = generateAdditionalOptions(tripPoint);
@@ -122,13 +122,13 @@ export default class TripPointEdit extends SmartView {
 
     if (this._data.startDate) {
       this._datepickerStartDate = flatpickr(
-        this.getElement().querySelector(`#event-start-time-1`),
-        {
-          enableTime: true,
-          dateFormat: `d/m/y H:i`,
-          defaultDate: this._data.startDate,
-          onChange: this._startDateChangeHandler
-        }
+          this.getElement().querySelector(`#event-start-time-1`),
+          {
+            enableTime: true,
+            dateFormat: `d/m/y H:i`,
+            defaultDate: this._data.startDate,
+            onChange: this._startDateChangeHandler
+          }
       );
     }
   }
@@ -141,13 +141,13 @@ export default class TripPointEdit extends SmartView {
 
     if (this._data.endDate) {
       this._datepickerEndDate = flatpickr(
-        this.getElement().querySelector(`#event-end-time-1`),
-        {
-          enableTime: true,
-          dateFormat: `d/m/Y H:i`,
-          defaultDate: this._data.endDate,
-          onChange: this._endDateChangeHandler
-        }
+          this.getElement().querySelector(`#event-end-time-1`),
+          {
+            enableTime: true,
+            dateFormat: `d/m/Y H:i`,
+            defaultDate: this._data.endDate,
+            onChange: this._endDateChangeHandler
+          }
       );
     }
   }
@@ -161,7 +161,7 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     this.updateData({
       isFavorite: !this._data.isFavorite
-    })
+    });
   }
 
   _costInputHandler(evt) {
@@ -183,7 +183,7 @@ export default class TripPointEdit extends SmartView {
       this.updateData({
         photos: TOWNS_PHOTOS.get(evt.target.value),
         description: TOWNS_DESCRIPTION.get(evt.target.value)
-      })
+      });
     }
   }
 
@@ -191,7 +191,7 @@ export default class TripPointEdit extends SmartView {
     this.updateData({
       tripPointType: evt.target.value,
       additionalOptions: OFFERS_TYPE.get(evt.target.value)
-    })
+    });
   }
 
   _startDateChangeHandler([userDate]) {
@@ -235,14 +235,14 @@ export default class TripPointEdit extends SmartView {
 
   reset(tripPoint) {
     this.updateData(
-      tripPoint
+        tripPoint
     );
   }
 
   _setInnerHandlers() {
     this.getElement()
       .querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`click`, this._favoriteClickHandler)
+      .addEventListener(`click`, this._favoriteClickHandler);
     this.getElement()
       .querySelector(`.event__input--price`)
       .addEventListener(`input`, this._costInputHandler);
@@ -254,7 +254,7 @@ export default class TripPointEdit extends SmartView {
       .addEventListener(`click`, this._defaultClickHandler);
     const radios = this
       .getElement()
-      .querySelectorAll(`input[name="event-type"]`)
+      .querySelectorAll(`input[name="event-type"]`);
     for (let i = 0; i < radios.length; i++) {
       radios[i].addEventListener(`click`, this._typeNameRadioHandler);
     }

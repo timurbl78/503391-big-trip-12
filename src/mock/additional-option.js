@@ -34,4 +34,4 @@ export const OFFERS_TYPE = new Map([
   [`check-in`, generateAdditionalOptions()],
   [`sightseeing`, generateAdditionalOptions()],
   [`restaurant`, generateAdditionalOptions()],
-])
+]);

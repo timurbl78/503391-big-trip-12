@@ -45,7 +45,7 @@ export const TOWNS_DESCRIPTION = new Map([
   [`Novosibirsk`, generateDestinationInfo()],
   [`Moscow`, generateDestinationInfo()],
   [`Kazan`, generateDestinationInfo()]
-])
+]);
 
 export const TOWNS_PHOTOS = new Map([
   [`Amsterdam`, generateDestinationPhotos()],

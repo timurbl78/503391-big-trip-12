@@ -1,5 +1,5 @@
 import TripPointView from "../view/trip-point";
-import TripPointEditView from "../view/trip-point-edit"
+import TripPointEditView from "../view/trip-point-edit";
 import {render, replace, RenderPosition, remove} from "../utils/render";
 
 const Mode = {
@@ -81,11 +81,11 @@ export default class TripPoint {
 
   _handleFavoriteClick() {
     this._changeData(Object.assign(
-      {},
-      this._tripPoint,
-      {
-        isFavorite: !this._tripPoint.isFavorite
-      }
+        {},
+        this._tripPoint,
+        {
+          isFavorite: !this._tripPoint.isFavorite
+        }
     ));
   }
 
@@ -102,11 +102,11 @@ export default class TripPoint {
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.EDITING;
-  };
+  }
 
   _replaceFormToCard() {
     replace(this._tripPointComponent, this._tripPointEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
-  };
+  }
 }

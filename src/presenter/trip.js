@@ -3,7 +3,7 @@ import TripEventsListView from "../view/trip-events-list";
 import TripPointPresenter from "./tripPoint";
 import NoPointsView from "../view/no-points";
 import {updateItem} from "../utils/common";
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {render, RenderPosition} from "../utils/render.js";
 
 const TASK_COUNT_PER_STEP = 8;
 
