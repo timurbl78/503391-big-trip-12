@@ -1,10 +1,11 @@
 import SmartView from "./smart";
 import {TOWNS_PHOTOS, TOWNS_DESCRIPTION} from "../mock/trip-point";
+import {OFFERS_TYPE} from "../mock/additional-option";
 import {TRIP_POINTS_MAP, TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES} from "../const";
 import flatpickr from "flatpickr";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-import {OFFERS_TYPE} from "../mock/additional-option";
+import {getRandomInteger} from "../utils/common";
 
 const createDestinationBlock = (tripPoint) => {
   return (
@@ -71,8 +72,8 @@ const generateAdditionalOptions = (tripPoint) => {
     for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
       const option = tripPoint.additionalOptions[i];
       options = options + `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-      <label class="event__offer-label" for="event-offer-luggage-1">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${option.label}-${i}" type="checkbox" name="event-offer-${option.label}" ${option.isChecked ? `checked` : ``}>
+      <label class="event__offer-label" for="event-offer-${option.label}-${i}">
         <span class="event__offer-title">${option.name}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${option.cost}</span>
@@ -107,6 +108,7 @@ export default class TripPointEdit extends SmartView {
     this._destinationInputHandler = this._destinationInputHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._typeNameRadioHandler = this._typeNameRadioHandler.bind(this);
+    this._offerCheckBoxHandler = this._offerCheckBoxHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepickerStartDate();
@@ -164,6 +166,36 @@ export default class TripPointEdit extends SmartView {
     });
   }
 
+  _offerCheckBoxHandler(evt) {
+    evt.preventDefault();
+    let offers = []
+    for (let i = 0; i < this._data.additionalOptions.length; i++) {
+      let option = this._data.additionalOptions[i];
+
+      if (`event-offer-` + option.label === evt.target.name) {
+        offers.push({
+          name: option.name,
+          cost: option.cost,
+          label: option.label,
+          isChecked: !option.isChecked,
+        })
+      } else {
+        offers.push({
+          name: option.name,
+          cost: option.cost,
+          label: option.label,
+          isChecked: option.isChecked,
+        })
+      }
+    }
+    this.updateData({
+      additionalOptions: offers
+    })
+    console.log(`...`);
+    console.log(this._data.additionalOptions);
+    console.log(`...`);
+  }
+
   _costInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
@@ -216,8 +248,7 @@ export default class TripPointEdit extends SmartView {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._defaultClickHandler);
   }
 
-  setFavoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
+  setFavoriteClickHandler() {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
@@ -252,11 +283,10 @@ export default class TripPointEdit extends SmartView {
     this.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, this._defaultClickHandler);
-    const radios = this
-      .getElement()
-      .querySelectorAll(`input[name="event-type"]`);
-    for (let i = 0; i < radios.length; i++) {
-      radios[i].addEventListener(`click`, this._typeNameRadioHandler);
+    if (this._data.additionalOptions.length !== 0) {
+      this.getElement()
+        .querySelector(`.event__section--offers`)
+        .addEventListener(`change`, this._offerCheckBoxHandler);
     }
   }
 
