@@ -1,9 +1,9 @@
 import SortMenuView from "../view/sort-menu";
 import TripEventsListView from "../view/trip-events-list";
-import TripPointEditView from "../view/trip-point-edit";
-import TripPointView from "../view/trip-point";
+import TripPointPresenter from "./tripPoint";
 import NoPointsView from "../view/no-points";
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {updateItem} from "../utils/common";
+import {render, RenderPosition} from "../utils/render.js";
 
 const TASK_COUNT_PER_STEP = 8;
 
@@ -11,7 +11,10 @@ export default class Trip {
   constructor(tripContainer) {
     this._tripContainer = tripContainer;
     this._renderedTaskCount = TASK_COUNT_PER_STEP;
+    this._tripPointPresenter = {};
 
+    this._handleTripPointChange = this._handleTripPointChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._noTripPoints = new NoPointsView();
     this._sortMenu = new SortMenuView();
     this._tripEventsList = new TripEventsListView();
@@ -19,6 +22,7 @@ export default class Trip {
 
   init(tripPoints) {
     this._tripPoints = tripPoints.slice();
+    this._sourcedTripPoints = tripPoints.slice();
 
     if (this._tripPoints.length === 0) {
       this._renderNoTripPoints();
@@ -28,6 +32,18 @@ export default class Trip {
 
       this._renderTripPoints();
     }
+  }
+
+  _handleTripPointChange(updatedTripPoint) {
+    this._tripPoints = updateItem(this._tripPoints, updatedTripPoint);
+    this._sourcedTripPoints = updateItem(this._sourcedTripPoints, updatedTripPoint);
+    this._tripPointPresenter[updatedTripPoint.id].init(updatedTripPoint);
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._tripPointPresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _renderNoTripPoints() {
@@ -43,36 +59,9 @@ export default class Trip {
   }
 
   _renderTripPoint(siteTripEventsListElement, tripPoint) {
-    const tripPointComponent = new TripPointView(tripPoint);
-    const tripPointEditComponent = new TripPointEditView(tripPoint);
-
-    const replaceCardToForm = () => {
-      replace(tripPointEditComponent, tripPointComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(tripPointComponent, tripPointEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    tripPointComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    tripPointEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(siteTripEventsListElement, tripPointComponent.getElement(), RenderPosition.BEFOREEND);
+    const tripPointPresenter = new TripPointPresenter(siteTripEventsListElement, this._handleTripPointChange, this._handleModeChange);
+    tripPointPresenter.init(tripPoint);
+    this._tripPointPresenter[tripPoint.id] = tripPointPresenter;
   }
 
   _renderTripPoints() {
