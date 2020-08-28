@@ -75,6 +75,17 @@ export const generateTripPoint = () => {
   const destination = generateRandomListItem(TOWNS);
   const tripPointType = generateRandomListItem(TRIP_POINT_TYPES);
 
+  const offers = OFFERS_TYPE.has(tripPointType) ? OFFERS_TYPE.get(tripPointType) : null;
+  let additionalOptions = [];
+  for (let i = 0; i < offers.length; i++) {
+    additionalOptions.push({
+      name: offers[i].name,
+      cost: offers[i].cost,
+      label: offers[i].label,
+      isChecked: getRandomInteger(0, 1) ? true : false,
+    })
+  }
+
   return {
     id: generateId(),
     tripPointType,
@@ -84,7 +95,7 @@ export const generateTripPoint = () => {
     cost: getRandomInteger(50, 300),
     description: TOWNS_DESCRIPTION.get(destination),
     photos: TOWNS_PHOTOS.get(destination),
-    additionalOptions: OFFERS_TYPE.get(tripPointType),
+    additionalOptions,
     isFavorite: false,
   };
 };
