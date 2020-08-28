@@ -5,15 +5,19 @@ const MAX_ADDITIONAL_OPTIONS = 3;
 
 const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;
+  let optionsAmount = 0;
 
-  for (let i = 0; i < Math.min(tripPoint.additionalOptions.length, MAX_ADDITIONAL_OPTIONS); i++) {
+  for (let i = 0; i < Math.min(tripPoint.additionalOptions.length); i++) {
     const option = tripPoint.additionalOptions[i];
-    additionalOptions = additionalOptions +
-      `<li class="event__offer">
+    if (option.isChecked && optionsAmount < MAX_ADDITIONAL_OPTIONS) {
+      optionsAmount++;
+      additionalOptions = additionalOptions +
+        `<li class="event__offer">
         <span class="event__offer-title">${option.name}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${option.cost}</span>
      </li>`;
+    }
   }
 
   return additionalOptions;
