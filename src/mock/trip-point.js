@@ -83,7 +83,7 @@ export const generateTripPoint = () => {
       cost: offers[i].cost,
       label: offers[i].label,
       isChecked: getRandomInteger(0, 1) ? true : false,
-    })
+    });
   }
 
   return {

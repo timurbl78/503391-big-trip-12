@@ -5,7 +5,6 @@ import {TRIP_POINTS_MAP, TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES} 
 import flatpickr from "flatpickr";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-import {getRandomInteger} from "../utils/common";
 
 const createDestinationBlock = (tripPoint) => {
   return (
@@ -168,7 +167,7 @@ export default class TripPointEdit extends SmartView {
 
   _offerCheckBoxHandler(evt) {
     evt.preventDefault();
-    let offers = []
+    let offers = [];
     for (let i = 0; i < this._data.additionalOptions.length; i++) {
       let option = this._data.additionalOptions[i];
 
@@ -178,22 +177,19 @@ export default class TripPointEdit extends SmartView {
           cost: option.cost,
           label: option.label,
           isChecked: !option.isChecked,
-        })
+        });
       } else {
         offers.push({
           name: option.name,
           cost: option.cost,
           label: option.label,
           isChecked: option.isChecked,
-        })
+        });
       }
     }
     this.updateData({
       additionalOptions: offers
-    })
-    console.log(`...`);
-    console.log(this._data.additionalOptions);
-    console.log(`...`);
+    });
   }
 
   _costInputHandler(evt) {
