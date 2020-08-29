@@ -1,5 +1,7 @@
 import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
+import moment from "moment";
+import trip from "../presenter/trip";
 
 const MAX_ADDITIONAL_OPTIONS = 3;
 
@@ -44,15 +46,9 @@ export default class TripPoint extends AbstractView {
   _createTripPointTemplate(tripPoint) {
     const startMinutes = tripPoint.startDate.getMinutes();
     const startHours = tripPoint.startDate.getHours();
-    const startDay = tripPoint.startDate.getDay();
-    const startMonth = tripPoint.startDate.getMonth();
-    const startYear = tripPoint.startDate.getFullYear();
 
     const endMinutes = tripPoint.endDate.getMinutes();
     const endHours = tripPoint.endDate.getHours();
-    const endDay = tripPoint.endDate.getDay();
-    const endMonth = tripPoint.endDate.getMonth();
-    const endYear = tripPoint.endDate.getFullYear();
 
     let dateDiff = tripPoint.endDate - tripPoint.startDate;
     const daysDiff = Math.floor(dateDiff / (24 * 60 * 60 * 1000));
@@ -94,11 +90,11 @@ export default class TripPoint extends AbstractView {
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time"
-            datetime="${startYear}-${startMonth}-${startDay}T${startHours}:${startMinutes}">
+            datetime="${moment(tripPoint.startDate).format()}">
               ${startHours}:${startMinutes}</time>
             &mdash;
             <time class="event__end-time"
-            datetime="${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}">
+            datetime="${moment(tripPoint.endDate).format()}">
               ${endHours}:${endMinutes}</time>
           </p>
           <p class="event__duration">${dateDiffString}</p>

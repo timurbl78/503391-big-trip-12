@@ -3,6 +3,7 @@ import {TOWNS_PHOTOS, TOWNS_DESCRIPTION} from "../mock/trip-point";
 import {OFFERS_TYPE} from "../mock/additional-option";
 import {TRIP_POINTS_MAP, TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES} from "../const";
 import flatpickr from "flatpickr";
+import moment from "moment";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -287,33 +288,6 @@ export default class TripPointEdit extends SmartView {
   }
 
   _createTripPointEditTemplate(tripPoint) {
-    let startDay = `01`;
-    let startHours = `00`;
-    let startMinutes = `00`;
-    let startMonth = `01`;
-    let startYear = `01`;
-    let endDay = `01`;
-    let endHours = `00`;
-    let endMinutes = `00`;
-    let endMonth = `01`;
-    let endYear = `01`;
-
-    if (tripPoint.startDate !== null) {
-      startMinutes = tripPoint.startDate.getMinutes();
-      startHours = tripPoint.startDate.getHours();
-      startDay = tripPoint.startDate.getDay();
-      startMonth = tripPoint.startDate.getMonth();
-      startYear = tripPoint.startDate.getFullYear() % 100;
-    }
-
-    if (tripPoint.endDate !== null) {
-      endMinutes = tripPoint.endDate.getMinutes();
-      endHours = tripPoint.endDate.getHours();
-      endDay = tripPoint.endDate.getDay();
-      endMonth = tripPoint.endDate.getMonth();
-      endYear = tripPoint.endDate.getFullYear() % 100;
-    }
-
     const eventTransferBlock = createEventTransferBlock(tripPoint);
     const eventActivityBlock = createEventActivityBlock(tripPoint);
 
@@ -374,12 +348,12 @@ export default class TripPointEdit extends SmartView {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDay}/${startMonth}/${startYear} ${startHours}:${startMinutes}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(tripPoint.startDate).format()}">
             —
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDay}/${endMonth}/${endYear} ${endHours}:${endMinutes}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(tripPoint.endDate).format()}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
