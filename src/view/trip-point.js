@@ -1,7 +1,6 @@
 import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
 import moment from "moment";
-import trip from "../presenter/trip";
 
 const MAX_ADDITIONAL_OPTIONS = 3;
 
