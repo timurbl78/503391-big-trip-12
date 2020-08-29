@@ -74,6 +74,9 @@ const generateDate = () => {
 export const generateTripPoint = () => {
   const destination = generateRandomListItem(TOWNS);
   const tripPointType = generateRandomListItem(TRIP_POINT_TYPES);
+  let startDate = generateDate();
+  let endDate = generateDate();
+  [startDate, endDate] = [startDate - endDate >= 0 ? endDate : startDate, startDate - endDate >= 0 ? startDate : endDate];
 
   const offers = OFFERS_TYPE.has(tripPointType) ? OFFERS_TYPE.get(tripPointType) : null;
   let additionalOptions = [];
@@ -90,8 +93,8 @@ export const generateTripPoint = () => {
     id: generateId(),
     tripPointType,
     destination,
-    startDate: generateDate(),
-    endDate: generateDate(),
+    startDate,
+    endDate,
     cost: getRandomInteger(50, 300),
     description: TOWNS_DESCRIPTION.get(destination),
     photos: TOWNS_PHOTOS.get(destination),
