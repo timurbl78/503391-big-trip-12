@@ -280,6 +280,12 @@ export default class TripPointEdit extends SmartView {
     this.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, this._defaultClickHandler);
+    const radios = this
+      .getElement()
+      .querySelectorAll(`input[name="event-type"]`)
+    for (let i = 0; i < radios.length; i++) {
+      radios[i].addEventListener(`click`, this._typeNameRadioHandler);
+    }
     if (this._data.additionalOptions.length !== 0) {
       this.getElement()
         .querySelector(`.event__section--offers`)
