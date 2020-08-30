@@ -282,7 +282,7 @@ export default class TripPointEdit extends SmartView {
       .addEventListener(`click`, this._defaultClickHandler);
     const radios = this
       .getElement()
-      .querySelectorAll(`input[name="event-type"]`)
+      .querySelectorAll(`input[name="event-type"]`);
     for (let i = 0; i < radios.length; i++) {
       radios[i].addEventListener(`click`, this._typeNameRadioHandler);
     }
