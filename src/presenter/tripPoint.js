@@ -74,8 +74,8 @@ export default class TripPoint {
     this._replaceCardToForm();
   }
 
-  _handleFormSubmit(task) {
-    this._changeData(task);
+  _handleFormSubmit(tripPoint) {
+    this._changeData(tripPoint);
     this._replaceFormToCard();
   }
 
