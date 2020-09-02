@@ -3,12 +3,16 @@ import MainMenuView from "./view/main-menu"
 import TotalCostView from "./view/total-cost";
 import TripMainInfoView from "./view/trip-main-info";
 import TripPresenter from "./presenter/trip";
+import PointsModel from "./model/points";
 import {generateTripPoint} from "./mock/trip-point";
 import {render, RenderPosition} from "./utils/render";
 
-const EVENTS_COUNT = 20;
+const EVENTS_COUNT = 6;
 
 const tripPoints = new Array(EVENTS_COUNT).fill().map(generateTripPoint);
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(tripPoints);
 
 const siteTripMainElement = document.querySelector(`.trip-main`);
 render(siteTripMainElement, new TripMainInfoView().getElement(), RenderPosition.AFTERBEGIN);
@@ -27,6 +31,6 @@ render(siteTripControlsElement, filtersElement.getElement(), RenderPosition.BEFO
 const sitePageMainElement = document.querySelector(`.page-main`);
 const siteTripEventsElement = sitePageMainElement.querySelector(`.trip-events`);
 
-const tripPresenter = new TripPresenter(siteTripEventsElement);
+const tripPresenter = new TripPresenter(siteTripEventsElement, pointsModel);
 
-tripPresenter.init(tripPoints);
+tripPresenter.init();

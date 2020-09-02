@@ -1,64 +1,110 @@
 import SortMenuView from "../view/sort-menu";
+import DayView from "../view/day";
+import TripDaysListView from "../view/trip-days-list";
 import TripEventsListView from "../view/trip-events-list";
+import PointListElement from "../view/point-list-element";
 import TripPointPresenter from "./tripPoint";
 import NoPointsView from "../view/no-points";
-import {SortType} from "../const";
-import {updateItem} from "../utils/common";
+import {SortType, UpdateType, UserAction} from "../const";
 import {sortByEvent, sortByPrice, sortByDate} from "../utils/point";
-import {render, RenderPosition} from "../utils/render.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 
 export default class Trip {
-  constructor(tripContainer) {
+  constructor(tripContainer, pointsModel) {
     this._tripContainer = tripContainer;
+    this._pointsModel = pointsModel;
     this._tripPointPresenter = {};
     this._currentSortType = null;
 
-    this._handleTripPointChange = this._handleTripPointChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._noTripPoints = new NoPointsView();
-    this._sortMenu = new SortMenuView();
-    this._tripEventsList = new TripEventsListView();
+    this._noTripPointsComponent = new NoPointsView();
+    this._sortMenuComponent = null;
+    this._tripDaysList = new TripDaysListView();
+
+    this._pointsModel.addObserver(this._handleModelEvent);
   }
 
-  init(tripPoints) {
-    if (this._currentSortType === null) {
-      this._currentSortType = SortType.TIME;
-      tripPoints.sort(sortByDate);
-    }
-    this._tripPoints = tripPoints.slice();
-    this._sourcedTripPoints = tripPoints.slice();
+  init() {
+    this._renderBoard();
+  }
 
-    if (this._tripPoints.length === 0) {
+  _clearBoard({resetSortType = false} = {}) {
+    Object
+      .values(this._tripPointPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._tripPointPresenter = {};
+
+    remove(this._sortMenuComponent);
+    remove(this._noTripPointsComponent);
+    remove(this._tripDaysList);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.EVENT;
+    }
+  }
+
+  _renderBoard() {
+    const tripPoints = this._getTasks();
+
+    if (this._currentSortType === null) {
+      this._currentSortType = SortType.EVENT;
+    }
+
+    if (tripPoints.length === 0) {
       this._renderNoTripPoints();
     } else {
+      this._sortMenuComponent = new SortMenuView(this._currentSortType);
       this._renderSortMenu();
-      this._renderTripEventsList();
+      this._renderTripDaysList();
 
       this._renderTripPoints();
     }
   }
 
-  _sortTasks(sortType) {
-    switch (sortType) {
+  _getTasks() {
+    switch (this._currentSortType) {
       case SortType.TIME:
-        this._tripPoints.sort(sortByDate);
-        break;
-      case SortType.PRICE:
-        this._tripPoints.sort(sortByPrice);
-        break;
+        return this._pointsModel.getPoints().slice().sort(sortByDate);
       case SortType.EVENT:
-        this._tripPoints.sort(sortByEvent);
-        break;
+        return this._pointsModel.getPoints().slice().sort(sortByEvent);
+      case SortType.PRICE:
+        return this._pointsModel.getPoints().slice().sort(sortByPrice);
     }
 
-    this._currentSortType = sortType;
+    return this._pointsModel.getPoints();
   }
 
-  _handleTripPointChange(updatedTripPoint) {
-    this._tripPoints = updateItem(this._tripPoints, updatedTripPoint);
-    this._sourcedTripPoints = updateItem(this._sourcedTripPoints, updatedTripPoint);
-    this._tripPointPresenter[updatedTripPoint.id].init(updatedTripPoint);
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this._pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this._pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointsModel.deletePoint(updateType, update);
+        break;
+    }
+  }
+
+  _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._tripPointPresenter[data.id].init(data);
+        break;
+      case UpdateType.MINOR:
+        this._clearBoard();
+        this._renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this._clearBoard({resetSortType: true});
+        this._renderBoard();
+        break;
+    }
   }
 
   _handleModeChange() {
@@ -68,7 +114,7 @@ export default class Trip {
   }
 
   _renderNoTripPoints() {
-    render(this._tripContainer, this._noTripPoints, RenderPosition.BEFOREEND);
+    render(this._tripContainer, this._noTripPointsComponent, RenderPosition.BEFOREEND);
   }
 
   _handleSortTypeChange(sortType) {
@@ -76,35 +122,77 @@ export default class Trip {
       return;
     }
 
-    this._sortTasks(sortType);
-    this._clearTripPointList();
-    this._renderTripPoints();
-  }
-
-  _clearTripPointList() {
-    this._tripEventsList.getElement().innerHTML = ``;
+    this._currentSortType = sortType;
+    this._clearBoard();
+    this._renderBoard();
   }
 
   _renderSortMenu() {
-    render(this._tripContainer, this._sortMenu, RenderPosition.BEFOREEND);
-    this._sortMenu.setSortTypeChangeHandler(this._handleSortTypeChange);
+    if (this._sortMenuComponent !== null) {
+      this._sortMenuComponent = null;
+    }
+
+    this._sortMenuComponent = new SortMenuView(this._currentSortType);
+    this._sortMenuComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    render(this._tripContainer, this._sortMenuComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderTripEventsList() {
-    render(this._tripContainer, this._tripEventsList, RenderPosition.BEFOREEND);
+  _renderTripDaysList() {
+    render(this._tripContainer, this._tripDaysList, RenderPosition.BEFOREEND);
   }
 
   _renderTripPoint(siteTripEventsListElement, tripPoint) {
-    const tripPointPresenter = new TripPointPresenter(siteTripEventsListElement, this._handleTripPointChange, this._handleModeChange);
+    const tripPointPresenter = new TripPointPresenter(siteTripEventsListElement, this._handleViewAction, this._handleModeChange);
     tripPointPresenter.init(tripPoint);
     this._tripPointPresenter[tripPoint.id] = tripPointPresenter;
   }
 
-  _renderTripPoints() {
-    const siteTripEventsListElement = this._tripContainer.querySelector(`.trip-events__list`);
+  _renderDay(numberOfDates, points) {
+    let day = new DayView(true, numberOfDates, points[0].startDate);
+    let tripEventsList = new TripEventsListView();
+    render(this._tripDaysList, day, RenderPosition.BEFOREEND);
+    render(day, tripEventsList, RenderPosition.BEFOREEND);
+    points.forEach((tripPoint) => {
+      let pointListElement = new PointListElement();
+      render(tripEventsList, pointListElement, RenderPosition.BEFOREEND);
+      this._renderTripPoint(pointListElement, tripPoint);
+    })
+  }
 
-    for (let i = 0; i < this._tripPoints.length; i++) {
-      this._renderTripPoint(siteTripEventsListElement, this._tripPoints[i]);
+  _renderTripPoints() {
+    const tripPoints = this._getTasks().slice();
+
+    if (this._currentSortType !== SortType.EVENT) {
+      const day = new DayView(false);
+      const tripEventsList = new TripEventsListView();
+
+      render(this._tripDaysList, day, RenderPosition.BEFOREEND);
+      render(day, tripEventsList, RenderPosition.BEFOREEND);
+
+      tripPoints.forEach((tripPoint) => {
+        let pointListElement = new PointListElement();
+        render(tripEventsList, pointListElement, RenderPosition.BEFOREEND);
+        this._renderTripPoint(pointListElement, tripPoint);
+      })
+    }
+    else {
+      let sameDayPoints = [tripPoints[0]];
+      let numberOfDates = 1;
+      for (let i = 1; i < tripPoints.length; i++) {
+        while (i < tripPoints.length && sameDayPoints[0].startDate.toLocaleDateString() === tripPoints[i].startDate.toLocaleDateString()) {
+          sameDayPoints.push(tripPoints[i]);
+          i++;
+        }
+        this._renderDay(numberOfDates, sameDayPoints);
+
+        numberOfDates++;
+        sameDayPoints = [];
+        if (i < tripPoints.length)
+          sameDayPoints = [tripPoints[i]];
+      }
+      if (sameDayPoints.length !== 0) {
+        this._renderDay(numberOfDates, sameDayPoints);
+      }
     }
   }
 }
