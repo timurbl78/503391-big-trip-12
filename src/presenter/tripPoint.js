@@ -79,18 +79,18 @@ export default class TripPoint {
 
   _handleFormSubmit(tripPoint) {
     this._changeData(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      tripPoint,
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        tripPoint
     );
     this._replaceFormToCard();
   }
 
   _handleDeleteClick(tripPoint) {
     this._changeData(
-      UserAction.DELETE_POINT,
-      UpdateType.MINOR,
-      tripPoint
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        tripPoint
     );
   }
 
@@ -99,12 +99,12 @@ export default class TripPoint {
         UserAction.UPDATE_POINT,
         UpdateType.MINOR,
         Object.assign(
-        {},
-        this._tripPoint,
-        {
-          isFavorite: !this._tripPoint.isFavorite
-        }
-    ));
+            {},
+            this._tripPoint,
+            {
+              isFavorite: !this._tripPoint.isFavorite
+            }
+        ));
   }
 
   _escKeyDownHandler(evt) {

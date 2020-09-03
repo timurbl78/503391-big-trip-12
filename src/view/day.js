@@ -15,11 +15,11 @@ export default class Day extends AbstractView {
         `<li class="trip-days__item  day">
           <div class="day__info">
             <span class="day__counter">${this._numberOfDay}</span>
-            <time class="day__date" datetime="${moment(this._date).format("YYYY-MM-DD")}">${moment(this._date).format("MMM DD")}</time>
+            <time class="day__date" datetime="${moment(this._date).format(`YYYY-MM-DD`)}">${moment(this._date).format(`MMM DD`)}</time>
           </div>
         </li>`
-      )
-    };
+      );
+    }
 
     return (
       `<li class="trip-days__item  day">
