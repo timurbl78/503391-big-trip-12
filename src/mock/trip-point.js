@@ -57,11 +57,11 @@ export const TOWNS_PHOTOS = new Map([
   [`Kazan`, generateDestinationPhotos()]
 ]);
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateDate = () => {
   const maxDaysGap = 7;
-  const daysGap = getRandomInteger(1, maxDaysGap);
+  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
   const currentDate = new Date();
 
   currentDate.setHours(getRandomInteger(0, 23), getRandomInteger(0, 59));

@@ -1,6 +1,7 @@
 import TripPointView from "../view/trip-point";
 import TripPointEditView from "../view/trip-point-edit";
 import {render, replace, RenderPosition, remove} from "../utils/render";
+import {UserAction, UpdateType} from "../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -20,6 +21,7 @@ export default class TripPoint {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleDefaultClick = this._handleDefaultClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -35,6 +37,7 @@ export default class TripPoint {
     this._tripPointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._tripPointEditComponent.setDefaultClickHandler(this._handleDefaultClick);
     this._tripPointComponent.setEditClickHandler(this._handleEditClick);
+    this._tripPointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
@@ -75,18 +78,33 @@ export default class TripPoint {
   }
 
   _handleFormSubmit(tripPoint) {
-    this._changeData(tripPoint);
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        tripPoint
+    );
     this._replaceFormToCard();
   }
 
+  _handleDeleteClick(tripPoint) {
+    this._changeData(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        tripPoint
+    );
+  }
+
   _handleFavoriteClick() {
-    this._changeData(Object.assign(
-        {},
-        this._tripPoint,
-        {
-          isFavorite: !this._tripPoint.isFavorite
-        }
-    ));
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        Object.assign(
+            {},
+            this._tripPoint,
+            {
+              isFavorite: !this._tripPoint.isFavorite
+            }
+        ));
   }
 
   _escKeyDownHandler(evt) {
