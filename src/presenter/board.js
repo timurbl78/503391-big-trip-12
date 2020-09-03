@@ -1,5 +1,3 @@
-import TotalCostView from "../view/total-cost";
-import TripMainInfoView from "../view/trip-main-info";
 import MainMenuView from "../view/main-menu";
 
 import {render} from "../utils/render";
@@ -20,10 +18,6 @@ export default class Board {
 
   _renderBoard() {
     this._siteTripMainElement = document.querySelector(`.trip-main`);
-    render(this._siteTripMainElement, new TripMainInfoView().getElement(), RenderPosition.AFTERBEGIN);
-
-    this._siteTripInfoElement = this._siteTripMainElement.querySelector(`.trip-info`);
-    render(this._siteTripInfoElement, new TotalCostView(this._tripPoints).getElement(), RenderPosition.BEFOREEND);
 
     this._mainMenuElement = new MainMenuView();
     this._siteTripControlsElement = this._siteTripMainElement.querySelector(`.trip-controls`);
@@ -33,20 +27,20 @@ export default class Board {
     this._pointsModel = new PointsModel();
     this._pointsModel.setPoints(this._tripPoints);
 
-    const filterModel = new FilterModel();
+    this._filterModel = new FilterModel();
 
-    const sitePageMainElement = document.querySelector(`.page-main`);
-    const siteTripEventsElement = sitePageMainElement.querySelector(`.trip-events`);
+    this._sitePageMainElement = document.querySelector(`.page-main`);
+    this._siteTripEventsElement = this._sitePageMainElement.querySelector(`.trip-events`);
 
-    const tripPresenter = new TripPresenter(siteTripEventsElement, this._pointsModel, filterModel);
-    const filterPresenter = new FilterPresenter(this._siteTripControlsElement, filterModel, this._pointsModel);
+    this._tripPresenter = new TripPresenter(this._siteTripEventsElement, this._siteTripMainElement, this._pointsModel, this._filterModel);
+    this._filterPresenter = new FilterPresenter(this._siteTripControlsElement, this._filterModel, this._pointsModel);
 
-    filterPresenter.init();
-    tripPresenter.init();
+    this._filterPresenter.init();
+    this._tripPresenter.init();
 
     document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      tripPresenter.createPoint();
+      this._tripPresenter.createPoint();
     });
   }
 }
