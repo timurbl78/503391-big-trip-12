@@ -4,8 +4,9 @@ import TripDaysListView from "../view/trip-days-list";
 import TripEventsListView from "../view/trip-events-list";
 import PointListElement from "../view/point-list-element";
 import TripPointPresenter from "./tripPoint";
+import PointNewPresenter from "./point-new";
 import NoPointsView from "../view/no-points";
-import {SortType, UpdateType, UserAction} from "../const";
+import {SortType, UpdateType, UserAction, FilterType} from "../const";
 import {filter} from "../utils/filter.js";
 import {sortByEvent, sortByPrice, sortByDate} from "../utils/point";
 import {render, RenderPosition, remove} from "../utils/render.js";
@@ -28,13 +29,23 @@ export default class Trip {
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+
+    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction);
   }
 
   init() {
     this._renderBoard();
   }
 
+  createPoint() {
+    this._currentSortType = SortType.DEFAULT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._pointNewPresenter.init();
+  }
+
   _clearBoard({resetSortType = false} = {}) {
+    this._pointNewPresenter.destroy();
+
     Object
       .values(this._tripPointPresenter)
       .forEach((presenter) => presenter.destroy());
@@ -115,6 +126,8 @@ export default class Trip {
   }
 
   _handleModeChange() {
+    this._pointNewPresenter.destroy();
+
     Object
       .values(this._tripPointPresenter)
       .forEach((presenter) => presenter.resetView());
@@ -163,7 +176,7 @@ export default class Trip {
       let pointListElement = new PointListElement();
       render(tripEventsList, pointListElement, RenderPosition.BEFOREEND);
       this._renderTripPoint(pointListElement, tripPoint);
-    })
+    });
   }
 
   _renderTripPoints() {
@@ -180,9 +193,8 @@ export default class Trip {
         let pointListElement = new PointListElement();
         render(tripEventsList, pointListElement, RenderPosition.BEFOREEND);
         this._renderTripPoint(pointListElement, tripPoint);
-      })
-    }
-    else {
+      });
+    } else {
       let sameDayPoints = [tripPoints[0]];
       let numberOfDates = 1;
       for (let i = 1; i < tripPoints.length; i++) {
@@ -194,8 +206,9 @@ export default class Trip {
 
         numberOfDates++;
         sameDayPoints = [];
-        if (i < tripPoints.length)
+        if (i < tripPoints.length) {
           sameDayPoints = [tripPoints[i]];
+        }
       }
       if (sameDayPoints.length !== 0) {
         this._renderDay(numberOfDates, sameDayPoints);

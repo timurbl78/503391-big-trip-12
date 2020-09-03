@@ -93,8 +93,32 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
+const offersBlank = OFFERS_TYPE.has(`bus`) ? OFFERS_TYPE.get(`bus`) : null;
+let additionalOptions = [];
+for (let i = 0; i < offersBlank.length; i++) {
+  additionalOptions.push({
+    name: offersBlank[i].name,
+    cost: offersBlank[i].cost,
+    label: offersBlank[i].label,
+    isChecked: false,
+  });
+}
+
+const BLANK_POINT = {
+  tripPointType: `bus`,
+  destination: ``,
+  startDate: new Date(),
+  endDate: new Date(),
+  cost: 0,
+  description: null,
+  photos: null,
+  additionalOptions,
+  isFavorite: false,
+};
+
+
 export default class TripPointEdit extends SmartView {
-  constructor(data) {
+  constructor(data = BLANK_POINT) {
     super();
     this._data = data;
     this._datepickerStartDate = null;
@@ -130,7 +154,6 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
-  // TODO: by className
   _setDatepickerStartDate() {
     if (this._datepickerStartDate) {
       this._datepickerStartDate.destroy();
@@ -416,7 +439,7 @@ export default class TripPointEdit extends SmartView {
     );
   }
 
-  _getTemplate() {
-    return this._createTripPointEditTemplate(this._data);
+  _getTemplate(className) {
+    return this._createTripPointEditTemplate(this._data, className);
   }
 }
