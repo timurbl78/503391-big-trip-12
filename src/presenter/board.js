@@ -1,11 +1,10 @@
 import MainMenuView from "../view/main-menu";
-
-import {render} from "../utils/render";
-import {RenderPosition} from "../utils/render";
 import PointsModel from "../model/points";
 import FilterModel from "../model/filter";
 import TripPresenter from "./trip";
 import FilterPresenter from "./filter";
+import {render} from "../utils/render";
+import {RenderPosition} from "../utils/render";
 
 export default class Board {
   constructor(tripPoints) {
