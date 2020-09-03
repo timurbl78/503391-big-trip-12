@@ -10,8 +10,6 @@ import {SortType, UpdateType, UserAction, FilterType} from "../const";
 import {filter} from "../utils/filter.js";
 import {sortByEvent, sortByPrice, sortByDate} from "../utils/point";
 import {render, RenderPosition, remove} from "../utils/render.js";
-import TripMainInfoView from "../view/trip-main-info";
-import TotalCostView from "../view/total-cost";
 
 export default class Trip {
   constructor(tripContainer, siteTripMainElement, pointsModel, filterModel) {
@@ -31,14 +29,25 @@ export default class Trip {
     this._sortMenuComponent = null;
     this._tripDaysList = new TripDaysListView();
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
-    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction, this._siteTripMainElement);
   }
 
   init() {
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderBoard();
+  }
+
+  destroy() {
+    this._clearBoard({resetSortType: true});
+
+    remove(this._tripDaysList);
+    // remove(this._tripMainInfo);
+    // remove(this._totalCost);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
   }
 
   createPoint() {
@@ -55,8 +64,6 @@ export default class Trip {
       .forEach((presenter) => presenter.destroy());
     this._tripPointPresenter = {};
 
-    remove(this._tripMainInfo);
-    remove(this._totalCost);
     remove(this._sortMenuComponent);
     remove(this._noTripPointsComponent);
     remove(this._tripDaysList);
@@ -68,12 +75,6 @@ export default class Trip {
 
   _renderBoard() {
     const tripPoints = this._getTasks();
-
-    this._tripMainInfo = new TripMainInfoView();
-    render(this._siteTripMainElement, this._tripMainInfo, RenderPosition.AFTERBEGIN);
-    this._siteTripInfoElement = this._siteTripMainElement.querySelector(`.trip-info`);
-    this._totalCost = new TotalCostView(tripPoints);
-    render(this._siteTripInfoElement, this._totalCost, RenderPosition.BEFOREEND);
 
     if (this._currentSortType === null) {
       this._currentSortType = SortType.EVENT;
