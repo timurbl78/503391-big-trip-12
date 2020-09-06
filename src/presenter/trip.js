@@ -86,7 +86,6 @@ export default class Trip {
       this._sortMenuComponent = new SortMenuView(this._currentSortType);
       this._renderSortMenu();
       this._renderTripDaysList();
-
       this._renderTripPoints();
     }
   }
