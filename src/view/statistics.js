@@ -60,7 +60,7 @@ const renderMoneyChart = (moneyCtx, data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`, `FLIGHT`, `CHECK-IN`, `SIGHTSEEING`, `RESTAURANT`],
+      labels: [`🚕 TAXI`, `🚌 BUS`, `🚂  TRAIN`, `🛳 SHIP`, `🚊 TRANSPORT`, `🚗 DRIVE`, `✈ FLIGHT`, `🏨 CHECK-IN`, `🏛 SIGHTSEEING`, `🍽 RESTAURANT`],
       datasets: [{
         data: [map.get(`TAXI`), map.get(`BUS`), map.get(`TRAIN`), map.get(`SHIP`), map.get(`TRANSPORT`),
           map.get(`DRIVE`), map.get(`FLIGHT`), map.get(`CHECK-IN`), map.get(`SIGHTSEEING`), map.get(`RESTAURANT`)],
@@ -149,7 +149,7 @@ const renderTransportChart = (transportCtx, data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`, `FLIGHT`, `CHECK-IN`, `SIGHTSEEING`, `RESTAURANT`],
+      labels: [`🚕 TAXI`, `🚌 BUS`, `🚂  TRAIN`, `🛳 SHIP`, `🚊 TRANSPORT`, `🚗 DRIVE`, `✈ FLIGHT`, `🏨 CHECK-IN`, `🏛 SIGHTSEEING`, `🍽 RESTAURANT`],
       datasets: [{
         data: [map.get(`TAXI`), map.get(`BUS`), map.get(`TRAIN`), map.get(`SHIP`), map.get(`TRANSPORT`),
           map.get(`DRIVE`), map.get(`FLIGHT`), map.get(`CHECK-IN`), map.get(`SIGHTSEEING`), map.get(`RESTAURANT`)],
@@ -238,7 +238,7 @@ const renderTimeChart = (timeCtx, data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`, `FLIGHT`, `CHECK-IN`, `SIGHTSEEING`, `RESTAURANT`],
+      labels: [`🚕 TAXI`, `🚌 BUS`, `🚂  TRAIN`, `🛳 SHIP`, `🚊 TRANSPORT`, `🚗 DRIVE`, `✈ FLIGHT`, `🏨 CHECK-IN`, `🏛 SIGHTSEEING`, `🍽 RESTAURANT`],
       datasets: [{
         data: [map.get(`TAXI`), map.get(`BUS`), map.get(`TRAIN`), map.get(`SHIP`), map.get(`TRANSPORT`),
           map.get(`DRIVE`), map.get(`FLIGHT`), map.get(`CHECK-IN`), map.get(`SIGHTSEEING`), map.get(`RESTAURANT`)],
