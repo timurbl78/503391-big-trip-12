@@ -1,7 +1,7 @@
 import SmartView from "./smart";
-import {TOWNS_PHOTOS, TOWNS_DESCRIPTION} from "../mock/trip-point";
+import {TOWNS_DESCRIPTION, TOWNS_PHOTOS} from "../mock/trip-point";
 import {OFFERS_TYPE} from "../mock/additional-option";
-import {TRIP_POINTS_MAP, TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES} from "../const";
+import {TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES, TRIP_POINTS_MAP} from "../const";
 import flatpickr from "flatpickr";
 import moment from "moment";
 
@@ -93,32 +93,33 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
-const offersBlank = OFFERS_TYPE.has(`bus`) ? OFFERS_TYPE.get(`bus`) : null;
-let additionalOptions = [];
-for (let i = 0; i < offersBlank.length; i++) {
-  additionalOptions.push({
-    name: offersBlank[i].name,
-    cost: offersBlank[i].cost,
-    label: offersBlank[i].label,
-    isChecked: false,
-  });
-}
+const generateBlackPoint = () => {
+  const offersBlank = OFFERS_TYPE.has(`bus`) ? OFFERS_TYPE.get(`bus`) : null;
+  let additionalOptions = [];
+  for (let i = 0; i < offersBlank.length; i++) {
+    additionalOptions.push({
+      name: offersBlank[i].name,
+      cost: offersBlank[i].cost,
+      label: offersBlank[i].label,
+      isChecked: false,
+    });
+  }
 
-const BLANK_POINT = {
-  tripPointType: `bus`,
-  destination: ``,
-  startDate: new Date(),
-  endDate: new Date(),
-  cost: 0,
-  description: null,
-  photos: null,
-  additionalOptions,
-  isFavorite: false,
+  return {
+    tripPointType: `bus`,
+    destination: ``,
+    startDate: new Date(),
+    endDate: new Date(),
+    cost: 0,
+    description: null,
+    photos: null,
+    additionalOptions,
+    isFavorite: false,
+  };
 };
 
-
 export default class TripPointEdit extends SmartView {
-  constructor(data = BLANK_POINT) {
+  constructor(data = generateBlackPoint()) {
     super();
     this._data = data;
     this._datepickerStartDate = null;
@@ -152,6 +153,29 @@ export default class TripPointEdit extends SmartView {
       this._datepickerEndDate.destroy();
       this._datepickerEndDate = null;
     }
+  }
+
+  _getTemplate(className) {
+    return this._createTripPointEditTemplate(this._data, className);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
+  }
+
+  setDefaultClickHandler(callback) {
+    this._callback.defaultClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._defaultClickHandler);
+  }
+
+  setFavoriteClickHandler() {
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
   _setDatepickerStartDate() {
@@ -190,6 +214,144 @@ export default class TripPointEdit extends SmartView {
           }
       );
     }
+  }
+
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, this._favoriteClickHandler);
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._costInputHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`input`, this._destinationInputHandler);
+    this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._defaultClickHandler);
+    const radios = this
+      .getElement()
+      .querySelectorAll(`input[name="event-type"]`);
+    for (let i = 0; i < radios.length; i++) {
+      radios[i].addEventListener(`click`, this._typeNameRadioHandler);
+    }
+    if (this._data.additionalOptions.length !== 0) {
+      this.getElement()
+        .querySelector(`.event__section--offers`)
+        .addEventListener(`change`, this._offerCheckBoxHandler);
+    }
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setDatepickerStartDate();
+    this._setDatepickerEndDate();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  reset(tripPoint) {
+    this.updateData(
+        tripPoint
+    );
+  }
+
+  _createTripPointEditTemplate(tripPoint) {
+    const eventTransferBlock = createEventTransferBlock(tripPoint);
+    const eventActivityBlock = createEventActivityBlock(tripPoint);
+
+    const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
+
+    let destinationInfoBlock = ``;
+    if (TOWNS_DESCRIPTION.get(tripPoint.destination) !== undefined) {
+      destinationInfoBlock = createDestinationBlock(tripPoint);
+    }
+
+    let eventDetailsBlock = ``;
+    if (destinationInfoBlock !== undefined || additionalOptionsBlock !== undefined) {
+      eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
+    }
+
+    return (
+      `<form class="event  event--edit" action="#" method="post">
+        <header class="event__header">
+          <div class="event__type-wrapper">
+            <label class="event__type  event__type-btn" for="event-type-toggle-1">
+              <span class="visually-hidden">Choose event type</span>
+              <img class="event__type-icon" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon" width="17" height="17">
+            </label>
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+
+            <div class="event__type-list">
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Transfer</legend>
+                ${eventTransferBlock}
+              </fieldset>
+
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Activity</legend>
+
+                ${eventActivityBlock}
+              </fieldset>
+            </div>
+          </div>
+
+          <div class="event__field-group  event__field-group--destination">
+            <label class="event__label  event__type-output" for="event-destination-1">
+              ${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
+            </label>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination}" list="destination-list-1" required>
+            <datalist id="destination-list-1">
+              <option value="Amsterdam"></option>
+              <option value="Geneva"></option>
+              <option value="Berlin"></option>
+              <option value="Colombo"></option>
+              <option value="Novosibirsk"></option>
+              <option value="Moscow"></option>
+              <option value="Kazan"></option>
+            </datalist>
+          </div>
+
+          <div class="event__field-group  event__field-group--time">
+            <label class="visually-hidden" for="event-start-time-1">
+              From
+            </label>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(tripPoint.startDate).format()}">
+            —
+            <label class="visually-hidden" for="event-end-time-1">
+              To
+            </label>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(tripPoint.endDate).format()}">
+          </div>
+
+          <div class="event__field-group  event__field-group--price">
+            <label class="event__label" for="event-price-1">
+              <span class="visually-hidden">Price</span>
+              €
+            </label>
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost ? tripPoint.cost : 0}">
+          </div>
+
+          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__reset-btn" type="reset">Delete</button>
+
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${tripPoint.isFavorite ? `checked` : ``}>
+          <label class="event__favorite-btn" for="event-favorite-1">
+            <span class="visually-hidden">Add to favorite</span>
+            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
+            </svg>
+          </label>
+
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>
+        </header>
+
+        ${eventDetailsBlock}
+      </form>`
+    );
   }
 
   _formSubmitHandler(evt) {
@@ -281,165 +443,5 @@ export default class TripPointEdit extends SmartView {
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
     this._callback.deleteClick(this._data);
-  }
-
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
-  }
-
-  setDefaultClickHandler(callback) {
-    this._callback.defaultClick = callback;
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._defaultClickHandler);
-  }
-
-  setFavoriteClickHandler() {
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
-  }
-
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
-    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
-  }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this._setDatepickerStartDate();
-    this._setDatepickerEndDate();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setDeleteClickHandler(this._callback.deleteClick);
-  }
-
-  reset(tripPoint) {
-    this.updateData(
-        tripPoint
-    );
-  }
-
-  _setInnerHandlers() {
-    this.getElement()
-      .querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`click`, this._favoriteClickHandler);
-    this.getElement()
-      .querySelector(`.event__input--price`)
-      .addEventListener(`input`, this._costInputHandler);
-    this.getElement()
-      .querySelector(`.event__input--destination`)
-      .addEventListener(`input`, this._destinationInputHandler);
-    this.getElement()
-      .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, this._defaultClickHandler);
-    const radios = this
-      .getElement()
-      .querySelectorAll(`input[name="event-type"]`);
-    for (let i = 0; i < radios.length; i++) {
-      radios[i].addEventListener(`click`, this._typeNameRadioHandler);
-    }
-    if (this._data.additionalOptions.length !== 0) {
-      this.getElement()
-        .querySelector(`.event__section--offers`)
-        .addEventListener(`change`, this._offerCheckBoxHandler);
-    }
-  }
-
-  _createTripPointEditTemplate(tripPoint) {
-    const eventTransferBlock = createEventTransferBlock(tripPoint);
-    const eventActivityBlock = createEventActivityBlock(tripPoint);
-
-    const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
-
-    let destinationInfoBlock = ``;
-    if (TOWNS_DESCRIPTION.get(tripPoint.destination) !== undefined) {
-      destinationInfoBlock = createDestinationBlock(tripPoint);
-    }
-
-    let eventDetailsBlock = ``;
-    if (destinationInfoBlock !== undefined || additionalOptionsBlock !== undefined) {
-      eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
-    }
-
-    return (
-      `<form class="event  event--edit" action="#" method="post">
-        <header class="event__header">
-          <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
-              <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon" width="17" height="17">
-            </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
-            <div class="event__type-list">
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Transfer</legend>
-                ${eventTransferBlock}
-              </fieldset>
-
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Activity</legend>
-
-                ${eventActivityBlock}
-              </fieldset>
-            </div>
-          </div>
-
-          <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
-              ${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
-            </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination}" list="destination-list-1">
-            <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Berlin"></option>
-              <option value="Colombo"></option>
-              <option value="Novosibirsk"></option>
-              <option value="Moscow"></option>
-              <option value="Kazan"></option>
-            </datalist>
-          </div>
-
-          <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">
-              From
-            </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(tripPoint.startDate).format()}">
-            —
-            <label class="visually-hidden" for="event-end-time-1">
-              To
-            </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(tripPoint.endDate).format()}">
-          </div>
-
-          <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-1">
-              <span class="visually-hidden">Price</span>
-              €
-            </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost ? tripPoint.cost : 0}">
-          </div>
-
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
-
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${tripPoint.isFavorite ? `checked` : ``}>
-          <label class="event__favorite-btn" for="event-favorite-1">
-            <span class="visually-hidden">Add to favorite</span>
-            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-              <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
-            </svg>
-          </label>
-
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
-        </header>
-
-        ${eventDetailsBlock}
-      </form>`
-    );
-  }
-
-  _getTemplate(className) {
-    return this._createTripPointEditTemplate(this._data, className);
   }
 }

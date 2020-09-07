@@ -1,6 +1,7 @@
 import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
 import moment from "moment";
+import {formatDatesDifference} from "../utils/point";
 
 const MAX_ADDITIONAL_OPTIONS = 3;
 
@@ -32,9 +33,8 @@ export default class TripPoint extends AbstractView {
     this._editClickHandler = this._editClickHandler.bind(this);
   }
 
-  _editClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.editClick();
+  _getTemplate() {
+    return this._createTripPointTemplate(this._tripPoint);
   }
 
   setEditClickHandler(callback) {
@@ -49,33 +49,7 @@ export default class TripPoint extends AbstractView {
     const endMinutes = tripPoint.endDate.getMinutes();
     const endHours = tripPoint.endDate.getHours();
 
-    let dateDiff = tripPoint.endDate - tripPoint.startDate;
-    const daysDiff = Math.floor(dateDiff / (24 * 60 * 60 * 1000));
-    dateDiff -= daysDiff * (24 * 60 * 60 * 1000);
-    const hoursDiff = Math.floor(dateDiff / (1000 * 60 * 60));
-    dateDiff -= hoursDiff * (60 * 60 * 1000);
-    const minutesDiff = Math.floor(dateDiff / (60 * 1000));
-
-    let dateDiffString = ``;
-    if (daysDiff) {
-      if (daysDiff < 10) {
-        dateDiffString += `0` + daysDiff + `D `;
-      } else {
-        dateDiffString += daysDiff + `D `;
-      }
-    }
-    if (hoursDiff) {
-      if (hoursDiff < 10) {
-        dateDiffString += `0` + hoursDiff + `H `;
-      } else {
-        dateDiffString += hoursDiff + `H `;
-      }
-    }
-    if (minutesDiff < 10) {
-      dateDiffString += `0` + minutesDiff + `M`;
-    } else {
-      dateDiffString += minutesDiff + `M`;
-    }
+    const dateDiffString = formatDatesDifference(tripPoint.endDate - tripPoint.startDate);
 
     const additionalOptions = generateAdditionalOptions(tripPoint);
     return (
@@ -116,8 +90,9 @@ export default class TripPoint extends AbstractView {
     );
   }
 
-  _getTemplate() {
-    return this._createTripPointTemplate(this._tripPoint);
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 }
 

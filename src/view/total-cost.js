@@ -6,6 +6,10 @@ export default class TotalCost extends AbstractView {
     this._tripPoints = tripPoints;
   }
 
+  _getTemplate() {
+    return this._createTotalCostTemplate(this._tripPoints);
+  }
+
   _createTotalCostTemplate(tripPoints) {
     let totalCost = 0;
 
@@ -23,9 +27,5 @@ export default class TotalCost extends AbstractView {
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalCost}</span>
     </p>`
     );
-  }
-
-  _getTemplate() {
-    return this._createTotalCostTemplate(this._tripPoints);
   }
 }

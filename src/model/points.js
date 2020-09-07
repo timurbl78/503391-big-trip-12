@@ -14,7 +14,6 @@ export default class Points extends ObserverView {
     return this._points;
   }
 
-
   updatePoint(updateType, update) {
     const index = this._points.findIndex((point) => point.id === update.id);
 

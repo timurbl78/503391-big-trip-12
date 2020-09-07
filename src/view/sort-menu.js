@@ -9,19 +9,14 @@ export default class SortMenu extends AbstractView {
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
-  _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `INPUT`) {
-      return;
-    }
-
-    this._callback.sortTypeChange(evt.target.dataset.sortType);
+  _getTemplate() {
+    return this._createSortMenuTemplate();
   }
 
   setSortTypeChangeHandler(callback) {
     this._callback.sortTypeChange = callback;
     this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
-
 
   _createSortMenuTemplate() {
     return (
@@ -52,7 +47,11 @@ export default class SortMenu extends AbstractView {
     );
   }
 
-  _getTemplate() {
-    return this._createSortMenuTemplate();
+  _sortTypeChangeHandler(evt) {
+    if (evt.target.tagName !== `INPUT`) {
+      return;
+    }
+
+    this._callback.sortTypeChange(evt.target.dataset.sortType);
   }
 }

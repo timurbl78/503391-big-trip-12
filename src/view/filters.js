@@ -10,9 +10,12 @@ export default class Filters extends AbstractView {
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
-  _filterTypeChangeHandler(evt) {
-    evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
+  getHeading() {
+    return createElement(`<h2 class="visually-hidden">Filter events</h2>`);
+  }
+
+  _getTemplate() {
+    return this._createFiltersTemplate();
   }
 
   setFilterTypeChangeHandler(callback) {
@@ -45,11 +48,8 @@ export default class Filters extends AbstractView {
     </form>`;
   }
 
-  getHeading() {
-    return createElement(`<h2 class="visually-hidden">Filter events</h2>`);
-  }
-
-  _getTemplate() {
-    return this._createFiltersTemplate();
+  _filterTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.value);
   }
 }

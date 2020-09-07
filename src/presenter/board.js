@@ -21,26 +21,6 @@ export default class Board {
     this._renderBoard();
   }
 
-  _handleSiteMenuClick(menuItem) {
-    switch (menuItem) {
-      case MenuItem.TABLE:
-        if (this._currentMenuItem !== MenuItem.TABLE) {
-          this._currentMenuItem = MenuItem.TABLE;
-          this._tripPresenter.init();
-          remove(this._statisticsComponent);
-        }
-        break;
-      case MenuItem.STATS:
-        if (this._currentMenuItem !== MenuItem.STATS) {
-          this._currentMenuItem = MenuItem.STATS;
-          this._tripPresenter.destroy();
-          this._statisticsComponent = new StatisticsView(this._pointsModel.getPoints());
-          render(this._sitePageMainElement.querySelector(`.page-body__container`), this._statisticsComponent, RenderPosition.BEFOREEND);
-        }
-        break;
-    }
-  }
-
   _renderBoard() {
     this._siteTripMainElement = document.querySelector(`.trip-main`);
 
@@ -81,5 +61,25 @@ export default class Board {
       this._tripPresenter.createPoint();
       this._siteTripMainElement.querySelector(`.trip-main__event-add-btn`).disabled = true;
     });
+  }
+
+  _handleSiteMenuClick(menuItem) {
+    switch (menuItem) {
+      case MenuItem.TABLE:
+        if (this._currentMenuItem !== MenuItem.TABLE) {
+          this._currentMenuItem = MenuItem.TABLE;
+          this._tripPresenter.init();
+          remove(this._statisticsComponent);
+        }
+        break;
+      case MenuItem.STATS:
+        if (this._currentMenuItem !== MenuItem.STATS) {
+          this._currentMenuItem = MenuItem.STATS;
+          this._tripPresenter.destroy();
+          this._statisticsComponent = new StatisticsView(this._pointsModel.getPoints());
+          render(this._sitePageMainElement.querySelector(`.page-body__container`), this._statisticsComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+    }
   }
 }

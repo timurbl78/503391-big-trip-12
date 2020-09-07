@@ -1,6 +1,10 @@
 import AbstractView from "./abstract";
 
 export default class TripMainInfo extends AbstractView {
+  _getTemplate() {
+    return this._createTripMainInfoTemplate();
+  }
+
   _createTripMainInfoTemplate() {
     return (
       `<section class="trip-main__trip-info  trip-info">
@@ -11,9 +15,5 @@ export default class TripMainInfo extends AbstractView {
       </div>
     </section>`
     );
-  }
-
-  _getTemplate() {
-    return this._createTripMainInfoTemplate();
   }
 }

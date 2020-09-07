@@ -68,6 +68,19 @@ export default class TripPoint {
     }
   }
 
+  _replaceCardToForm() {
+    replace(this._tripPointEditComponent, this._tripPointComponent);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._changeMode();
+    this._mode = Mode.EDITING;
+  }
+
+  _replaceFormToCard() {
+    replace(this._tripPointComponent, this._tripPointEditComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
+  }
+
   _handleDefaultClick() {
     this._tripPointEditComponent.reset(this._tripPoint);
     this._replaceFormToCard();
@@ -113,18 +126,5 @@ export default class TripPoint {
       this._tripPointEditComponent.reset(this._tripPoint);
       this._replaceFormToCard();
     }
-  }
-
-  _replaceCardToForm() {
-    replace(this._tripPointEditComponent, this._tripPointComponent);
-    document.addEventListener(`keydown`, this._escKeyDownHandler);
-    this._changeMode();
-    this._mode = Mode.EDITING;
-  }
-
-  _replaceFormToCard() {
-    replace(this._tripPointComponent, this._tripPointEditComponent);
-    document.removeEventListener(`keydown`, this._escKeyDownHandler);
-    this._mode = Mode.DEFAULT;
   }
 }

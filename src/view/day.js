@@ -9,6 +9,10 @@ export default class Day extends AbstractView {
     this._date = date;
   }
 
+  _getTemplate() {
+    return this._createTripDaysList();
+  }
+
   _createTripDaysList() {
     if (this._isHaveInfo) {
       return (
@@ -25,9 +29,5 @@ export default class Day extends AbstractView {
       `<li class="trip-days__item  day">
         <div class="day__info"></div>
       </li>`);
-  }
-
-  _getTemplate() {
-    return this._createTripDaysList();
   }
 }
