@@ -1,7 +1,7 @@
 import {generateRandomListItem, getRandomInteger} from "../utils/common";
 import {OFFERS_TYPE} from "./additional-option";
 
-const TRIP_POINT_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+export const TRIP_POINT_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 const TOWNS = [`Amsterdam`, `Geneva`, `Berlin`, `Colombo`, `Novosibirsk`, `Moscow`, `Kazan`];
 const RANDOM_TEXTS = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
   `Cras aliquet varius magna, non porta ligula feugiat eget. `,

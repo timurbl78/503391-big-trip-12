@@ -234,7 +234,7 @@ export default class TripPointEdit extends SmartView {
   _costInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      cost: evt.target.value
+      cost: Number(evt.target.value)
     }, true);
   }
 

@@ -11,6 +11,11 @@ export default class TotalCost extends AbstractView {
 
     for (let i = 0; i < tripPoints.length; i++) {
       totalCost += tripPoints[i].cost;
+      for (let j = 0; j < tripPoints[i].additionalOptions.length; j++) {
+        if (tripPoints[i].additionalOptions[j].isChecked) {
+          totalCost += tripPoints[i].additionalOptions[j].cost;
+        }
+      }
     }
 
     return (

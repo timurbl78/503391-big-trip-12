@@ -12,8 +12,10 @@ import {sortByEvent, sortByPrice, sortByDate} from "../utils/point";
 import {render, RenderPosition, remove} from "../utils/render.js";
 
 export default class Trip {
-  constructor(tripContainer, pointsModel, filterModel) {
+  constructor(tripContainer, siteTripMainElement, pointsModel, filterModel) {
     this._tripContainer = tripContainer;
+    this._siteTripMainElement = siteTripMainElement;
+
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._tripPointPresenter = {};
@@ -27,14 +29,25 @@ export default class Trip {
     this._sortMenuComponent = null;
     this._tripDaysList = new TripDaysListView();
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
-    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction, this._siteTripMainElement);
   }
 
   init() {
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderBoard();
+  }
+
+  destroy() {
+    this._clearBoard({resetSortType: true});
+
+    remove(this._tripDaysList);
+    // remove(this._tripMainInfo);
+    // remove(this._totalCost);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
   }
 
   createPoint() {
@@ -73,7 +86,6 @@ export default class Trip {
       this._sortMenuComponent = new SortMenuView(this._currentSortType);
       this._renderSortMenu();
       this._renderTripDaysList();
-
       this._renderTripPoints();
     }
   }

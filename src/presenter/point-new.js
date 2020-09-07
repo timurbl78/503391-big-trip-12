@@ -4,9 +4,10 @@ import {remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 export default class PointNew {
-  constructor(container, changeData) {
+  constructor(container, changeData, siteTripMainElement) {
     this._container = container;
     this._changeData = changeData;
+    this._siteTripMainElement = siteTripMainElement;
 
     this._tripPointEditComponent = null;
 
@@ -31,12 +32,12 @@ export default class PointNew {
     component.classList.add(`trip-events__item`);
     this._container.insertBefore(component, tripDaysComponent);
 
-    // render(this._container, this._tripPointEditComponent, RenderPosition.AFTERBEGIN);
-
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   destroy() {
+    this._siteTripMainElement.querySelector(`.trip-main__event-add-btn`).disabled = false;
+
     if (this._tripPointEditComponent === undefined) {
       return;
     }
