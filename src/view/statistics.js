@@ -4,6 +4,8 @@ import SmartView from "./smart.js";
 import {formatDatesDifference} from "../utils/point";
 import {TRIP_POINT_TYPES} from "../mock/trip-point";
 
+const BAR_HEIGHT = 55;
+
 const renderMoneyChart = (moneyCtx, data) => {
   let map = new Map([
     [`TAXI`, 0],
@@ -326,11 +328,9 @@ export default class Statistics extends SmartView {
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    const BAR_HEIGHT = 55;
     moneyCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
     transportCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
     timeCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
-
 
     this._moneyChart = renderMoneyChart(moneyCtx, this._data);
     this._transportChart = renderTransportChart(transportCtx, this._data);
