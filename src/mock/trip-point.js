@@ -1,5 +1,7 @@
 import {generateRandomListItem, getRandomInteger} from "../utils/common";
 import {OFFERS_TYPE} from "./additional-option";
+import {OFFERS} from "./additional-option";
+import {DESTINATION} from "./destination";
 
 export const TRIP_POINT_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 const TOWNS = [`Amsterdam`, `Geneva`, `Berlin`, `Colombo`, `Novosibirsk`, `Moscow`, `Kazan`];
@@ -26,17 +28,6 @@ const generateDestinationInfo = () => {
   return destinationInfo;
 };
 
-const generateDestinationPhotos = () => {
-  const numberOfPhotos = getRandomInteger(1, 6);
-  let eventPhotos = ``;
-
-  for (let i = 0; i < numberOfPhotos; i++) {
-    eventPhotos = eventPhotos + `<img class="event__photo" src="http://picsum.photos/248/152?r=${Math.random()}" alt="Event photo">`;
-  }
-
-  return eventPhotos;
-};
-
 export const TOWNS_DESCRIPTION = new Map([
   [`Amsterdam`, generateDestinationInfo()],
   [`Geneva`, generateDestinationInfo()],
@@ -45,16 +36,6 @@ export const TOWNS_DESCRIPTION = new Map([
   [`Novosibirsk`, generateDestinationInfo()],
   [`Moscow`, generateDestinationInfo()],
   [`Kazan`, generateDestinationInfo()]
-]);
-
-export const TOWNS_PHOTOS = new Map([
-  [`Amsterdam`, generateDestinationPhotos()],
-  [`Geneva`, generateDestinationPhotos()],
-  [`Colombo`, generateDestinationPhotos()],
-  [`Berlin`, generateDestinationPhotos()],
-  [`Novosibirsk`, generateDestinationPhotos()],
-  [`Moscow`, generateDestinationPhotos()],
-  [`Kazan`, generateDestinationPhotos()]
 ]);
 
 export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
@@ -72,33 +53,36 @@ const generateDate = () => {
 };
 
 export const generateTripPoint = () => {
-  const destination = generateRandomListItem(TOWNS);
+  const destinationName = generateRandomListItem(TOWNS);
   const tripPointType = generateRandomListItem(TRIP_POINT_TYPES);
   let startDate = generateDate();
   let endDate = generateDate();
   [startDate, endDate] = [startDate - endDate >= 0 ? endDate : startDate, startDate - endDate >= 0 ? startDate : endDate];
 
-  const offers = OFFERS_TYPE.has(tripPointType) ? OFFERS_TYPE.get(tripPointType) : null;
-  let additionalOptions = [];
-  for (let i = 0; i < offers.length; i++) {
-    additionalOptions.push({
-      name: offers[i].name,
-      cost: offers[i].cost,
-      label: offers[i].label,
-      isChecked: getRandomInteger(0, 1) ? true : false,
-    });
+  let destination;
+
+  for (let i = 0; i < DESTINATION.length; i++) {
+    if (DESTINATION[i].name === destinationName) {
+      destination = DESTINATION[i];
+    }
+  }
+
+  let offers;
+
+  for (let i = 0; i < OFFERS.length; i++) {
+    if (OFFERS[i].type === tripPointType) {
+      offers = OFFERS[i].offers;
+    }
   }
 
   return {
     id: generateId(),
     tripPointType,
     destination,
+    offers,
     startDate,
     endDate,
     cost: getRandomInteger(50, 300),
-    description: TOWNS_DESCRIPTION.get(destination),
-    photos: TOWNS_PHOTOS.get(destination),
-    additionalOptions,
     isFavorite: false,
   };
 };

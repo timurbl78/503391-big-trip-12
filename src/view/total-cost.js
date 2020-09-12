@@ -13,6 +13,8 @@ export default class TotalCost extends AbstractView {
   _createTotalCostTemplate(tripPoints) {
     let totalCost = 0;
 
+    // TODO: calculate cost
+    /*
     for (let i = 0; i < tripPoints.length; i++) {
       totalCost += tripPoints[i].cost;
       for (let j = 0; j < tripPoints[i].additionalOptions.length; j++) {
@@ -21,6 +23,7 @@ export default class TotalCost extends AbstractView {
         }
       }
     }
+     */
 
     return (
       `<p class="trip-info__cost">

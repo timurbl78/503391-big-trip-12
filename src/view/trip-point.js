@@ -9,8 +9,8 @@ const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;
   let optionsAmount = 0;
 
-  for (let i = 0; i < Math.min(tripPoint.additionalOptions.length); i++) {
-    const option = tripPoint.additionalOptions[i];
+  for (let i = 0; i < Math.min(tripPoint.offers.length); i++) {
+    const option = tripPoint.offers[i];
     if (option.isChecked && optionsAmount < MAX_ADDITIONAL_OPTIONS) {
       optionsAmount++;
       additionalOptions = additionalOptions +
@@ -58,7 +58,7 @@ export default class TripPoint extends AbstractView {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)} ${tripPoint.destination}</h3>
+        <h3 class="event__title">${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)} ${tripPoint.destination.name}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

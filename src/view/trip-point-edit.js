@@ -1,5 +1,6 @@
 import SmartView from "./smart";
-import {TOWNS_DESCRIPTION, TOWNS_PHOTOS} from "../mock/trip-point";
+import {TOWNS_DESCRIPTION} from "../mock/trip-point";
+import {TOWNS_PHOTOS} from "../mock/destination";
 import {OFFERS_TYPE} from "../mock/additional-option";
 import {TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES, TRIP_POINTS_MAP} from "../const";
 import flatpickr from "flatpickr";
@@ -8,14 +9,19 @@ import moment from "moment";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const createDestinationBlock = (tripPoint) => {
+  let template = ``;
+  for (let i = 0; i < tripPoint.destination.pictures.length; i++) {
+    template += `<img class="event__photo" src="${tripPoint.destination.pictures[i]}" alt="Event photo">`;
+  }
+
   return (
     `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${tripPoint.description}</p>
+    <p class="event__destination-description">${tripPoint.destination.description}</p>
 
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${tripPoint.photos}
+        ${template}
       </div>
     </div>
   </section>`);
@@ -69,8 +75,9 @@ const createAdditionalOptionsBLock = (tripPoint) => {
 const generateAdditionalOptions = (tripPoint) => {
   let options = ``;
   if (tripPoint.additionalOptions !== null) {
-    for (let i = 0; i < tripPoint.additionalOptions.length; i++) {
-      const option = tripPoint.additionalOptions[i];
+    for (let i = 0; i < tripPoint.offers.length; i++) {
+      const option = tripPoint.offers[i];
+      // TODO: delete option.label
       options = options + `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${option.label}-${i}" type="checkbox" name="event-offer-${option.label}" ${option.isChecked ? `checked` : ``}>
       <label class="event__offer-label" for="event-offer-${option.label}-${i}">
@@ -236,7 +243,7 @@ export default class TripPointEdit extends SmartView {
     for (let i = 0; i < radios.length; i++) {
       radios[i].addEventListener(`click`, this._typeNameRadioHandler);
     }
-    if (this._data.additionalOptions.length !== 0) {
+    if (this._data.offers.length !== 0) {
       this.getElement()
         .querySelector(`.event__section--offers`)
         .addEventListener(`change`, this._offerCheckBoxHandler);
@@ -264,7 +271,7 @@ export default class TripPointEdit extends SmartView {
     const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
 
     let destinationInfoBlock = ``;
-    if (TOWNS_DESCRIPTION.get(tripPoint.destination) !== undefined) {
+    if (TOWNS_DESCRIPTION.get(tripPoint.destination.name) !== undefined) {
       destinationInfoBlock = createDestinationBlock(tripPoint);
     }
 
@@ -301,7 +308,7 @@ export default class TripPointEdit extends SmartView {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination}" list="destination-list-1" required>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination.name}" list="destination-list-1" required>
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -369,8 +376,8 @@ export default class TripPointEdit extends SmartView {
   _offerCheckBoxHandler(evt) {
     evt.preventDefault();
     let offers = [];
-    for (let i = 0; i < this._data.additionalOptions.length; i++) {
-      let option = this._data.additionalOptions[i];
+    for (let i = 0; i < this._data.offers.length; i++) {
+      let option = this._data.offers[i];
 
       if (`event-offer-` + option.label === evt.target.name) {
         offers.push({
@@ -389,7 +396,7 @@ export default class TripPointEdit extends SmartView {
       }
     }
     this.updateData({
-      additionalOptions: offers
+      offers
     });
   }
 
@@ -403,15 +410,20 @@ export default class TripPointEdit extends SmartView {
   _destinationInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      destination: evt.target.value,
-      photos: TOWNS_PHOTOS.get(evt.target.value),
-      description: TOWNS_DESCRIPTION.get(evt.target.value)
+      destination: {
+        name: evt.target.value,
+        pictures: TOWNS_PHOTOS.get(evt.target.value),
+        description: TOWNS_DESCRIPTION.get(evt.target.value)
+      }
     }, true);
 
     if (TOWNS_DESCRIPTION.has(evt.target.value)) {
       this.updateData({
-        photos: TOWNS_PHOTOS.get(evt.target.value),
-        description: TOWNS_DESCRIPTION.get(evt.target.value)
+        destination: {
+          name: evt.target.value,
+          pictures: TOWNS_PHOTOS.get(evt.target.value),
+          description: TOWNS_DESCRIPTION.get(evt.target.value)
+        }
       });
     }
   }
