@@ -9,10 +9,12 @@ const Mode = {
 };
 
 export default class TripPoint {
-  constructor(tripPointsContainer, changeData, changeMode) {
+  constructor(tripPointsContainer, destinations, offers, changeData, changeMode) {
     this._tripPointsContainer = tripPointsContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._destinations = destinations;
+    this._offers = offers;
 
     this._tripPointComponent = null;
     this._tripPointEditComponent = null;
@@ -32,7 +34,7 @@ export default class TripPoint {
     const prevTripPointEditComponent = this._tripPointEditComponent;
 
     this._tripPointComponent = new TripPointView(tripPoint);
-    this._tripPointEditComponent = new TripPointEditView(tripPoint);
+    this._tripPointEditComponent = new TripPointEditView(tripPoint, this._destinations, this._offers);
 
     this._tripPointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._tripPointEditComponent.setDefaultClickHandler(this._handleDefaultClick);

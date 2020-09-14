@@ -39,4 +39,36 @@ export const formatDatesDifference = (dateDiff) => {
   }
 
   return dateDiffString;
-}
+};
+
+export const getOffersByType = (type, offers) => {
+  for (let i = 0; i < offers.length; i++) {
+    if (offers[i].type === type) {
+      return offers[i].offers;
+    }
+  }
+
+  return [];
+};
+
+export const getDestinationByName = (name, destinations) => {
+  for (let i = 0; i < destinations.length; i++) {
+    if (destinations[i].name === name) {
+      return destinations[i];
+    }
+  }
+
+  return {};
+};
+
+export const isHasTown = (town, destinations) => {
+  for (let i = 0; i < destinations.length; i++) {
+    if (destinations[i].name === town) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);

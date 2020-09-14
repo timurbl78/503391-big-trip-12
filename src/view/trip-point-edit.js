@@ -1,17 +1,15 @@
 import SmartView from "./smart";
-import {TOWNS_DESCRIPTION} from "../mock/trip-point";
-import {TOWNS_PHOTOS} from "../mock/destination";
-import {OFFERS_TYPE} from "../mock/additional-option";
-import {TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES, TRIP_POINTS_MAP} from "../const";
+import {TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES, TRIP_POINTS_MAP, OFFER_TYPE} from "../const";
 import flatpickr from "flatpickr";
 import moment from "moment";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+import {getDestinationByName, getOffersByType, isHasTown} from "../utils/point";
 
 const createDestinationBlock = (tripPoint) => {
   let template = ``;
   for (let i = 0; i < tripPoint.destination.pictures.length; i++) {
-    template += `<img class="event__photo" src="${tripPoint.destination.pictures[i]}" alt="Event photo">`;
+    template += `<img class="event__photo" src="${tripPoint.destination.pictures[i].src}" alt="${tripPoint.destination.pictures[i].description}">`;
   }
 
   return (
@@ -34,8 +32,8 @@ const createEventActivityBlock = (tripPoint) => {
     let type = TRIP_POINT_ACTIVITIES_TYPE[i];
     block +=
       `<div class="event__type-item">
-        <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
+        <input id="event-type-${type}-${tripPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${tripPoint.id}">${type[0].toUpperCase() + type.slice(1)}</label>
       </div>`;
   }
 
@@ -48,8 +46,8 @@ const createEventTransferBlock = (tripPoint) => {
     let type = TRIP_POINT_TRANSFER_TYPES[i];
     block +=
       `<div class="event__type-item">
-        <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label>
+        <input id="event-type-${type}-${tripPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${tripPoint.id}">${type[0].toUpperCase() + type.slice(1)}</label>
       </div>`;
   }
   return block;
@@ -74,16 +72,17 @@ const createAdditionalOptionsBLock = (tripPoint) => {
 
 const generateAdditionalOptions = (tripPoint) => {
   let options = ``;
-  if (tripPoint.additionalOptions !== null) {
+  if (tripPoint.offers !== null) {
     for (let i = 0; i < tripPoint.offers.length; i++) {
       const option = tripPoint.offers[i];
+      tripPoint.offers[i].label = option.title.toLowerCase().split(` `).join(`-`);
       // TODO: delete option.label
       options = options + `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${option.label}-${i}" type="checkbox" name="event-offer-${option.label}" ${option.isChecked ? `checked` : ``}>
-      <label class="event__offer-label" for="event-offer-${option.label}-${i}">
-        <span class="event__offer-title">${option.name}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${tripPoint.tripPointType}-${i}" type="checkbox" name="event-offer-${option.label}" ${option.isChecked ? `checked` : ``}>
+      <label class="event__offer-label" for="event-offer-${tripPoint.tripPointType}-${i}">
+        <span class="event__offer-title">${option.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${option.cost}</span>
+        &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
       </label>
     </div>`;
     }
@@ -100,8 +99,9 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
+// TODO: fix! (add new point)
 const generateBlackPoint = () => {
-  const offersBlank = OFFERS_TYPE.has(`bus`) ? OFFERS_TYPE.get(`bus`) : null;
+  const offersBlank = OFFER_TYPE.has(`bus`) ? OFFER_TYPE.get(`bus`) : null;
   let additionalOptions = [];
   for (let i = 0; i < offersBlank.length; i++) {
     additionalOptions.push({
@@ -126,9 +126,11 @@ const generateBlackPoint = () => {
 };
 
 export default class TripPointEdit extends SmartView {
-  constructor(data = generateBlackPoint()) {
+  constructor(data = generateBlackPoint(), destinations, offers) {
     super();
     this._data = data;
+    this._destinations = destinations;
+    this._offers = offers;
     this._datepickerStartDate = null;
     this._datepickerEndDate = null;
 
@@ -223,7 +225,6 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
-
   _setInnerHandlers() {
     this.getElement()
       .querySelector(`.event__favorite-checkbox`)
@@ -268,15 +269,15 @@ export default class TripPointEdit extends SmartView {
     const eventTransferBlock = createEventTransferBlock(tripPoint);
     const eventActivityBlock = createEventActivityBlock(tripPoint);
 
-    const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint);
+    const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint, this._offers);
 
     let destinationInfoBlock = ``;
-    if (TOWNS_DESCRIPTION.get(tripPoint.destination.name) !== undefined) {
+    if (isHasTown(tripPoint.destination.name, this._destinations)) {
       destinationInfoBlock = createDestinationBlock(tripPoint);
     }
 
     let eventDetailsBlock = ``;
-    if (destinationInfoBlock !== undefined || additionalOptionsBlock !== undefined) {
+    if (destinationInfoBlock !== undefined && additionalOptionsBlock !== undefined) {
       eventDetailsBlock = createEventDetailsBlock(additionalOptionsBlock, destinationInfoBlock);
     }
 
@@ -379,17 +380,18 @@ export default class TripPointEdit extends SmartView {
     for (let i = 0; i < this._data.offers.length; i++) {
       let option = this._data.offers[i];
 
-      if (`event-offer-` + option.label === evt.target.name) {
+      if (`event-offer-` + option.title.toLowerCase().split(` `).join(`-`) === evt.target.name) {
+        evt.target.checked = !evt.target.checked;
         offers.push({
-          name: option.name,
-          cost: option.cost,
+          title: option.title,
+          price: option.price,
           label: option.label,
           isChecked: !option.isChecked,
         });
       } else {
         offers.push({
-          name: option.name,
-          cost: option.cost,
+          title: option.title,
+          price: option.price,
           label: option.label,
           isChecked: option.isChecked,
         });
@@ -409,20 +411,22 @@ export default class TripPointEdit extends SmartView {
 
   _destinationInputHandler(evt) {
     evt.preventDefault();
+    const destination = getDestinationByName(evt.target.value, this._destinations);
+
     this.updateData({
       destination: {
         name: evt.target.value,
-        pictures: TOWNS_PHOTOS.get(evt.target.value),
-        description: TOWNS_DESCRIPTION.get(evt.target.value)
+        pictures: destination.pictures || [],
+        description: destination.description || null
       }
     }, true);
 
-    if (TOWNS_DESCRIPTION.has(evt.target.value)) {
+    if (isHasTown(evt.target.value, this._destinations)) {
       this.updateData({
         destination: {
           name: evt.target.value,
-          pictures: TOWNS_PHOTOS.get(evt.target.value),
-          description: TOWNS_DESCRIPTION.get(evt.target.value)
+          pictures: destination.pictures,
+          description: destination.description
         }
       });
     }
@@ -431,7 +435,7 @@ export default class TripPointEdit extends SmartView {
   _typeNameRadioHandler(evt) {
     this.updateData({
       tripPointType: evt.target.value,
-      additionalOptions: OFFERS_TYPE.get(evt.target.value)
+      offers: getOffersByType(evt.target.value, this._offers)
     });
   }
 

@@ -1,5 +1,5 @@
 import TripPointEdit from "../view/trip-point-edit";
-import {generateId} from "../mock/trip-point";
+import {generateId} from "../utils/point";
 import {remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 

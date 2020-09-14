@@ -2,6 +2,7 @@ export const TRIP_POINTS_MAP = new Map([[`taxi`, `to`], [`bus`, `to`], [`train`,
   [`drive`, `to`], [`flight`, `to`], [`check-in`, `in`], [`sightseeing`, `in`], [`restaurant`, `in`]]);
 export const TRIP_POINT_TRANSFER_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
 export const TRIP_POINT_ACTIVITIES_TYPE = [`check-in`, `sightseeing`, `restaurant`];
+export const OFFER_TYPE = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 
 export const SortType = {
   EVENT: `event`,
@@ -18,7 +19,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const FilterType = {

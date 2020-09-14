@@ -15,9 +15,9 @@ const generateAdditionalOptions = (tripPoint) => {
       optionsAmount++;
       additionalOptions = additionalOptions +
         `<li class="event__offer">
-        <span class="event__offer-title">${option.name}</span>
+        <span class="event__offer-title">${option.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${option.cost}</span>
+        &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
      </li>`;
     }
   }

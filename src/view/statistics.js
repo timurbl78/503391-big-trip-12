@@ -2,7 +2,7 @@ import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from "./smart.js";
 import {formatDatesDifference} from "../utils/point";
-import {TRIP_POINT_TYPES} from "../mock/trip-point";
+import {OFFER_TYPE} from "../const";
 
 const BAR_HEIGHT = 55;
 
@@ -328,9 +328,9 @@ export default class Statistics extends SmartView {
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    moneyCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
-    transportCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
-    timeCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
+    moneyCtx.height = BAR_HEIGHT * OFFER_TYPE.length;
+    transportCtx.height = BAR_HEIGHT * OFFER_TYPE.length;
+    timeCtx.height = BAR_HEIGHT * OFFER_TYPE.length;
 
     this._moneyChart = renderMoneyChart(moneyCtx, this._data);
     this._transportChart = renderTransportChart(transportCtx, this._data);
