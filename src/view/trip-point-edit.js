@@ -1,10 +1,10 @@
 import SmartView from "./smart";
-import {TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES, TRIP_POINTS_MAP, OFFER_TYPE} from "../const";
+import {TRIP_POINT_ACTIVITIES_TYPE, TRIP_POINT_TRANSFER_TYPES, TRIP_POINTS_MAP} from "../const";
 import flatpickr from "flatpickr";
 import moment from "moment";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-import {getDestinationByName, getOffersByType, isHasTown} from "../utils/point";
+import {generateId, getDestinationByName, getOffersByType, isHasTown} from "../utils/point";
 
 const createDestinationBlock = (tripPoint) => {
   let template = ``;
@@ -99,38 +99,12 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
     </section>`);
 };
 
-// TODO: fix! (add new point)
-const generateBlackPoint = () => {
-  const offersBlank = OFFER_TYPE.has(`bus`) ? OFFER_TYPE.get(`bus`) : null;
-  let additionalOptions = [];
-  for (let i = 0; i < offersBlank.length; i++) {
-    additionalOptions.push({
-      name: offersBlank[i].name,
-      cost: offersBlank[i].cost,
-      label: offersBlank[i].label,
-      isChecked: false,
-    });
-  }
-
-  return {
-    tripPointType: `bus`,
-    destination: ``,
-    startDate: new Date(),
-    endDate: new Date(),
-    cost: 0,
-    description: null,
-    photos: null,
-    additionalOptions,
-    isFavorite: false,
-  };
-};
-
 export default class TripPointEdit extends SmartView {
-  constructor(data = generateBlackPoint(), destinations, offers) {
+  constructor(data, destinations = [], offers = []) {
     super();
-    this._data = data;
     this._destinations = destinations;
     this._offers = offers;
+    this._data = data || this._generateDefaultPoint();
     this._datepickerStartDate = null;
     this._datepickerEndDate = null;
 
@@ -265,6 +239,23 @@ export default class TripPointEdit extends SmartView {
     );
   }
 
+  _generateDefaultPoint() {
+    return {
+      id: generateId(),
+      tripPointType: `bus`,
+      destination: {
+        description: ``,
+        name: ``,
+        pictures: []
+      },
+      startDate: new Date(),
+      endDate: new Date(),
+      offers: getOffersByType(`bus`, this._offers),
+      cost: 0,
+      isFavorite: false,
+    };
+  }
+
   _createTripPointEditTemplate(tripPoint) {
     const eventTransferBlock = createEventTransferBlock(tripPoint);
     const eventActivityBlock = createEventActivityBlock(tripPoint);
@@ -272,7 +263,7 @@ export default class TripPointEdit extends SmartView {
     const additionalOptionsBlock = createAdditionalOptionsBLock(tripPoint, this._offers);
 
     let destinationInfoBlock = ``;
-    if (isHasTown(tripPoint.destination.name, this._destinations)) {
+    if (this._destinations && isHasTown(tripPoint.destination.name, this._destinations)) {
       destinationInfoBlock = createDestinationBlock(tripPoint);
     }
 
@@ -282,7 +273,7 @@ export default class TripPointEdit extends SmartView {
     }
 
     return (
-      `<form class="event  event--edit" action="#" method="post">
+      `<form class="event trip-events__item event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">

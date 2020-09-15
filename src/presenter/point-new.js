@@ -4,10 +4,12 @@ import {remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 export default class PointNew {
-  constructor(container, changeData, siteTripMainElement) {
+  constructor(container, changeData, siteTripMainElement, offers, destinations) {
     this._container = container;
     this._changeData = changeData;
     this._siteTripMainElement = siteTripMainElement;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._tripPointEditComponent = null;
 
@@ -22,14 +24,13 @@ export default class PointNew {
       return;
     }
 
-    this._tripPointEditComponent = new TripPointEdit();
+    this._tripPointEditComponent = new TripPointEdit(null, this._destinations, this._offers);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._tripPointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._tripPointEditComponent.setDefaultClickHandler(this._handleDefaultClick);
 
     const tripDaysComponent = this._container.querySelector(`.trip-days`);
     const component = this._tripPointEditComponent.getElement();
-    component.classList.add(`trip-events__item`);
     this._container.insertBefore(component, tripDaysComponent);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);

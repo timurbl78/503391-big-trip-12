@@ -34,8 +34,6 @@ export default class Trip {
     this._loadingComponent = new LoadingView();
     this._sortMenuComponent = null;
     this._tripDaysList = new TripDaysListView();
-
-    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction, this._siteTripMainElement);
   }
 
   init() {
@@ -89,6 +87,8 @@ export default class Trip {
   }
 
   _renderBoard() {
+    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction, this._siteTripMainElement, this._getOffers(), this._getDestinations());
+
     if (this._isLoading) {
       this._renderLoading();
       return;
