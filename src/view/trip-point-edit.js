@@ -71,6 +71,9 @@ const createAdditionalOptionsBLock = (tripPoint) => {
 };
 
 const generateAdditionalOptions = (tripPoint) => {
+  if (tripPoint.offers === undefined) {
+    console.log(tripPoint);
+  }
   let options = ``;
   if (tripPoint.offers !== null) {
     for (let i = 0; i < tripPoint.offers.length; i++) {
@@ -100,11 +103,12 @@ const createEventDetailsBlock = (additionalOptionsBlock, destinationInfoBlock) =
 };
 
 export default class TripPointEdit extends SmartView {
-  constructor(data, destinations = [], offers = []) {
+  constructor(point, destinations = [], offers = []) {
     super();
     this._destinations = destinations;
     this._offers = offers;
-    this._data = data || this._generateDefaultPoint();
+    this._data = point || this._generateDefaultPoint();
+    this._data = TripPointEdit.parsePointToData(this._data);
     this._datepickerStartDate = null;
     this._datepickerEndDate = null;
 
@@ -138,8 +142,8 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
-  _getTemplate(className) {
-    return this._createTripPointEditTemplate(this._data, className);
+  _getTemplate() {
+    return this._createTripPointEditTemplate(this._data);
   }
 
   setDeleteClickHandler(callback) {
@@ -235,7 +239,7 @@ export default class TripPointEdit extends SmartView {
 
   reset(tripPoint) {
     this.updateData(
-        tripPoint
+        TripPointEdit.parsePointToData(tripPoint)
     );
   }
 
@@ -279,7 +283,7 @@ export default class TripPointEdit extends SmartView {
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon" width="17" height="17">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${this._data.isDisabled ? `disabled` : ``}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -289,7 +293,6 @@ export default class TripPointEdit extends SmartView {
 
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Activity</legend>
-
                 ${eventActivityBlock}
               </fieldset>
             </div>
@@ -299,7 +302,7 @@ export default class TripPointEdit extends SmartView {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination.name}" list="destination-list-1" required>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripPoint.destination.name}" list="destination-list-1" required ${this._data.isDisabled ? `disabled` : ``}>
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -315,12 +318,12 @@ export default class TripPointEdit extends SmartView {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(tripPoint.startDate).format()}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(tripPoint.startDate).format()}" ${this._data.isDisabled ? `disabled` : ``}>
             —
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(tripPoint.endDate).format()}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(tripPoint.endDate).format()}" ${this._data.isDisabled ? `disabled` : ``}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -328,13 +331,13 @@ export default class TripPointEdit extends SmartView {
               <span class="visually-hidden">Price</span>
               €
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost ? tripPoint.cost : 0}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost ? tripPoint.cost : 0}" ${this._data.isDisabled ? `disabled` : ``}>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${tripPoint.isFavorite ? `checked` : ``}>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${tripPoint.isFavorite ? `checked` : ``} ${this._data.isDisabled ? `disabled` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -354,7 +357,7 @@ export default class TripPointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(TripPointEdit.parseDataToPoint(this._data));
   }
 
   _favoriteClickHandler(evt) {
@@ -448,6 +451,28 @@ export default class TripPointEdit extends SmartView {
 
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteClick(this._data);
+    this._callback.deleteClick(TripPointEdit.parseDataToPoint(this._data));
+  }
+
+  static parsePointToData(point) {
+    return Object.assign(
+        {},
+        point,
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        }
+    );
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
   }
 }

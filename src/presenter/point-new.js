@@ -19,7 +19,7 @@ export default class PointNew {
   }
 
   init() {
-    if (this._taskEditComponent !== undefined) {
+    if (this._tripPointEditComponent !== null) {
       return;
     }
 
@@ -43,9 +43,16 @@ export default class PointNew {
     }
 
     remove(this._tripPointEditComponent);
-    this._taskEditComponent = undefined;
+    this._tripPointEditComponent = undefined;
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  setSaving() {
+    this._tripPointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
   }
 
   _handleFormSubmit(point) {
@@ -54,7 +61,6 @@ export default class PointNew {
         UpdateType.MINOR,
         point
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {

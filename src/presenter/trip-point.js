@@ -8,6 +8,11 @@ const Mode = {
   EDITING: `EDITING`
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`
+};
+
 export default class TripPoint {
   constructor(tripPointsContainer, destinations, offers, changeData, changeMode) {
     this._tripPointsContainer = tripPointsContainer;
@@ -53,6 +58,7 @@ export default class TripPoint {
 
     if (this._mode === Mode.EDITING) {
       replace(this._tripPointEditComponent, prevTripPointEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevTripPointComponent);
@@ -67,6 +73,23 @@ export default class TripPoint {
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToCard();
+    }
+  }
+
+  setViewState(state) {
+    switch (state) {
+      case State.SAVING:
+        this._tripPointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._tripPointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
     }
   }
 
@@ -98,7 +121,6 @@ export default class TripPoint {
         UpdateType.MINOR,
         tripPoint
     );
-    this._replaceFormToCard();
   }
 
   _handleDeleteClick(tripPoint) {
