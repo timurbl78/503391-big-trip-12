@@ -13,10 +13,11 @@ import {sortByEvent, sortByPrice, sortByDate} from "../utils/point";
 import {render, RenderPosition, remove} from "../utils/render.js";
 
 export default class Trip {
-  constructor(tripContainer, siteTripMainElement, pointsModel, filterModel, destinationsModel, offersModel) {
+  constructor(tripContainer, siteTripMainElement, api, pointsModel, filterModel, destinationsModel, offersModel) {
     this._tripContainer = tripContainer;
     this._siteTripMainElement = siteTripMainElement;
 
+    this._api = api;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._destinationsModel = destinationsModel;
@@ -210,7 +211,9 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);

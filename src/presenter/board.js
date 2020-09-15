@@ -69,7 +69,7 @@ export default class Board {
     this._sitePageMainElement = document.querySelector(`.page-main`);
     this._siteTripEventsElement = this._sitePageMainElement.querySelector(`.trip-events`);
 
-    this._tripPresenter = new TripPresenter(this._siteTripEventsElement, this._siteTripMainElement, this._pointsModel, this._filterModel, this._destinationsModel, this._offersModel);
+    this._tripPresenter = new TripPresenter(this._siteTripEventsElement, this._siteTripMainElement, this._api, this._pointsModel, this._filterModel, this._destinationsModel, this._offersModel);
     this._filterPresenter = new FilterPresenter(this._siteTripControlsElement, this._filterModel, this._pointsModel);
 
     this._filterPresenter.init();
