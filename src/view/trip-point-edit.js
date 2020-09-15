@@ -71,9 +71,6 @@ const createAdditionalOptionsBLock = (tripPoint) => {
 };
 
 const generateAdditionalOptions = (tripPoint) => {
-  if (tripPoint.offers === undefined) {
-    console.log(tripPoint);
-  }
   let options = ``;
   if (tripPoint.offers !== null) {
     for (let i = 0; i < tripPoint.offers.length; i++) {
