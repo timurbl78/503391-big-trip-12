@@ -4,7 +4,7 @@ import flatpickr from "flatpickr";
 import moment from "moment";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-import {generateId, getDestinationByName, getOffersByType, isHasTown} from "../utils/point";
+import {getDestinationByName, getOffersByType, isHasTown} from "../utils/point";
 
 const createDestinationBlock = (tripPoint) => {
   let template = ``;
@@ -241,7 +241,6 @@ export default class TripPointEdit extends SmartView {
 
   _generateDefaultPoint() {
     return {
-      id: generateId(),
       tripPointType: `bus`,
       destination: {
         description: ``,
