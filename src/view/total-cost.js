@@ -10,7 +10,7 @@ export default class TotalCost extends AbstractView {
     return this._createTotalCostTemplate(this._tripPoints);
   }
 
-  _createTotalCostTemplate(tripPoints) {
+  _createTotalCostTemplate() {
     let totalCost = 0;
 
     // TODO: calculate cost
