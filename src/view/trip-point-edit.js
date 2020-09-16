@@ -331,8 +331,12 @@ export default class TripPointEdit extends SmartView {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${tripPoint.cost ? tripPoint.cost : 0}" ${this._data.isDisabled ? `disabled` : ``}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${this._data.isDisabled ? `disabled` : ``}>
+          ${this._data.isSaving ? `Saving...` : `Save`}
+          </button>
+          <button class="event__reset-btn" type="reset" ${this._data.isDisabled ? `disabled` : ``}>
+          ${this._data.isDeleting ? `Deleting...` : `Delete`}
+          </button>
 
           <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${tripPoint.isFavorite ? `checked` : ``} ${this._data.isDisabled ? `disabled` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
