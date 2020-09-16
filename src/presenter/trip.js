@@ -143,6 +143,7 @@ export default class Trip {
 
     this._sortMenuComponent = new SortMenuView(this._currentSortType);
     this._sortMenuComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
     render(this._tripContainer, this._sortMenuComponent, RenderPosition.BEFOREEND);
   }
 

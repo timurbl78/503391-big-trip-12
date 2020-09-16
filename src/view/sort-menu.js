@@ -21,7 +21,9 @@ export default class SortMenu extends AbstractView {
   _createSortMenuTemplate() {
     return (
       `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-      <span class="trip-sort__item  trip-sort__item--day"></span>
+      ${this._currentSortType === SortType.EVENT ?
+        `<span class="trip-sort__item  trip-sort__item--day">Day</span>`
+        : `<span class="trip-sort__item  trip-sort__item--day"></span>`}
 
       <div class="trip-sort__item  trip-sort__item--event">
         <input id="sort-event" class="trip-sort__input  visually-hidden" ${this._currentSortType === SortType.EVENT ? `checked` : ``} type="radio" name="trip-sort" value="sort-event" data-sort-type="${SortType.EVENT}">
