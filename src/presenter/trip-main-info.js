@@ -10,12 +10,12 @@ export default class TripMainInfo {
     this._totalCost = null;
   }
 
-  init(tripPoints) {
+  init() {
     const prevTripMainInfoComponent = this._tripMainInfo;
     const prevTotalCostComponent = this._totalCost;
 
     this._tripMainInfo = new TripMainInfoView();
-    this._totalCost = new TotalCostView(tripPoints);
+    this._totalCost = new TotalCostView();
 
     if (prevTripMainInfoComponent === null || prevTotalCostComponent === null) {
       render(this._tripMainInfoContainer, this._tripMainInfo, RenderPosition.AFTERBEGIN);

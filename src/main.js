@@ -1,10 +1,13 @@
 import BoardPresenter from "./presenter/board";
-import {generateTripPoint} from "./mock/trip-point";
+import Api from "./api";
 
 const EVENTS_COUNT = 20;
 
-const tripPoints = new Array(EVENTS_COUNT).fill().map(generateTripPoint);
+const AUTHORIZATION = `Basic hS2sd3dfSf4dEsa2j`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
-const boardPresenter = new BoardPresenter(tripPoints);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const boardPresenter = new BoardPresenter(api);
 
 boardPresenter.init();

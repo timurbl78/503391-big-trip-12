@@ -1,13 +1,14 @@
 import TripPointEdit from "../view/trip-point-edit";
-import {generateId} from "../mock/trip-point";
 import {remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 export default class PointNew {
-  constructor(container, changeData, siteTripMainElement) {
+  constructor(container, changeData, siteTripMainElement, offers, destinations) {
     this._container = container;
     this._changeData = changeData;
     this._siteTripMainElement = siteTripMainElement;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._tripPointEditComponent = null;
 
@@ -18,18 +19,17 @@ export default class PointNew {
   }
 
   init() {
-    if (this._taskEditComponent !== undefined) {
+    if (this._tripPointEditComponent !== null) {
       return;
     }
 
-    this._tripPointEditComponent = new TripPointEdit();
+    this._tripPointEditComponent = new TripPointEdit(null, this._destinations, this._offers);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._tripPointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._tripPointEditComponent.setDefaultClickHandler(this._handleDefaultClick);
 
     const tripDaysComponent = this._container.querySelector(`.trip-days`);
     const component = this._tripPointEditComponent.getElement();
-    component.classList.add(`trip-events__item`);
     this._container.insertBefore(component, tripDaysComponent);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
@@ -43,18 +43,36 @@ export default class PointNew {
     }
 
     remove(this._tripPointEditComponent);
-    this._taskEditComponent = undefined;
+    this._tripPointEditComponent = undefined;
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  setSaving() {
+    this._tripPointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._tripPointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._tripPointEditComponent.shake(resetFormState);
   }
 
   _handleFormSubmit(point) {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, point)
+        point
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {

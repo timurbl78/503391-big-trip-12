@@ -6,9 +6,15 @@ export default class TotalCost extends AbstractView {
     this._tripPoints = tripPoints;
   }
 
-  _createTotalCostTemplate(tripPoints) {
+  _getTemplate() {
+    return this._createTotalCostTemplate(this._tripPoints);
+  }
+
+  _createTotalCostTemplate() {
     let totalCost = 0;
 
+    // TODO: calculate cost
+    /*
     for (let i = 0; i < tripPoints.length; i++) {
       totalCost += tripPoints[i].cost;
       for (let j = 0; j < tripPoints[i].additionalOptions.length; j++) {
@@ -17,15 +23,12 @@ export default class TotalCost extends AbstractView {
         }
       }
     }
+     */
 
     return (
       `<p class="trip-info__cost">
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalCost}</span>
     </p>`
     );
-  }
-
-  _getTemplate() {
-    return this._createTotalCostTemplate(this._tripPoints);
   }
 }

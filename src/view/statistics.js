@@ -1,38 +1,10 @@
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from "./smart.js";
-import {TRIP_POINT_TYPES} from "../mock/trip-point";
+import {formatDatesDifference} from "../utils/point";
+import {OFFER_TYPE} from "../const";
 
-const formatDatesDiff = (dateDiff) => {
-  const daysDiff = Math.floor(dateDiff / (24 * 60 * 60 * 1000));
-  dateDiff -= daysDiff * (24 * 60 * 60 * 1000);
-  const hoursDiff = Math.floor(dateDiff / (1000 * 60 * 60));
-  dateDiff -= hoursDiff * (60 * 60 * 1000);
-  const minutesDiff = Math.floor(dateDiff / (60 * 1000));
-
-  let dateDiffString = ``;
-  if (daysDiff) {
-    if (daysDiff < 10) {
-      dateDiffString += `0` + daysDiff + `D `;
-    } else {
-      dateDiffString += daysDiff + `D `;
-    }
-  }
-  if (hoursDiff) {
-    if (hoursDiff < 10) {
-      dateDiffString += `0` + hoursDiff + `H `;
-    } else {
-      dateDiffString += hoursDiff + `H `;
-    }
-  }
-  if (minutesDiff < 10) {
-    dateDiffString += `0` + minutesDiff + `M`;
-  } else {
-    dateDiffString += minutesDiff + `M`;
-  }
-
-  return dateDiffString;
-};
+const BAR_HEIGHT = 55;
 
 const renderMoneyChart = (moneyCtx, data) => {
   let map = new Map([
@@ -256,7 +228,7 @@ const renderTimeChart = (timeCtx, data) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `${formatDatesDiff(val)}`
+          formatter: (val) => `${formatDatesDifference(val)}`
         }
       },
       title: {
@@ -356,11 +328,9 @@ export default class Statistics extends SmartView {
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    const BAR_HEIGHT = 55;
-    moneyCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
-    transportCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
-    timeCtx.height = BAR_HEIGHT * TRIP_POINT_TYPES.length;
-
+    moneyCtx.height = BAR_HEIGHT * OFFER_TYPE.length;
+    transportCtx.height = BAR_HEIGHT * OFFER_TYPE.length;
+    timeCtx.height = BAR_HEIGHT * OFFER_TYPE.length;
 
     this._moneyChart = renderMoneyChart(moneyCtx, this._data);
     this._transportChart = renderTransportChart(transportCtx, this._data);

@@ -1,6 +1,7 @@
 import AbstractView from "./abstract";
 import {TRIP_POINTS_MAP} from "../const";
 import moment from "moment";
+import {formatDatesDifference} from "../utils/point";
 
 const MAX_ADDITIONAL_OPTIONS = 3;
 
@@ -8,15 +9,15 @@ const generateAdditionalOptions = (tripPoint) => {
   let additionalOptions = ``;
   let optionsAmount = 0;
 
-  for (let i = 0; i < Math.min(tripPoint.additionalOptions.length); i++) {
-    const option = tripPoint.additionalOptions[i];
+  for (let i = 0; i < Math.min(tripPoint.offers.length); i++) {
+    const option = tripPoint.offers[i];
     if (option.isChecked && optionsAmount < MAX_ADDITIONAL_OPTIONS) {
       optionsAmount++;
       additionalOptions = additionalOptions +
         `<li class="event__offer">
-        <span class="event__offer-title">${option.name}</span>
+        <span class="event__offer-title">${option.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${option.cost}</span>
+        &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
      </li>`;
     }
   }
@@ -32,9 +33,8 @@ export default class TripPoint extends AbstractView {
     this._editClickHandler = this._editClickHandler.bind(this);
   }
 
-  _editClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.editClick();
+  _getTemplate() {
+    return this._createTripPointTemplate(this._tripPoint);
   }
 
   setEditClickHandler(callback) {
@@ -49,33 +49,7 @@ export default class TripPoint extends AbstractView {
     const endMinutes = tripPoint.endDate.getMinutes();
     const endHours = tripPoint.endDate.getHours();
 
-    let dateDiff = tripPoint.endDate - tripPoint.startDate;
-    const daysDiff = Math.floor(dateDiff / (24 * 60 * 60 * 1000));
-    dateDiff -= daysDiff * (24 * 60 * 60 * 1000);
-    const hoursDiff = Math.floor(dateDiff / (1000 * 60 * 60));
-    dateDiff -= hoursDiff * (60 * 60 * 1000);
-    const minutesDiff = Math.floor(dateDiff / (60 * 1000));
-
-    let dateDiffString = ``;
-    if (daysDiff) {
-      if (daysDiff < 10) {
-        dateDiffString += `0` + daysDiff + `D `;
-      } else {
-        dateDiffString += daysDiff + `D `;
-      }
-    }
-    if (hoursDiff) {
-      if (hoursDiff < 10) {
-        dateDiffString += `0` + hoursDiff + `H `;
-      } else {
-        dateDiffString += hoursDiff + `H `;
-      }
-    }
-    if (minutesDiff < 10) {
-      dateDiffString += `0` + minutesDiff + `M`;
-    } else {
-      dateDiffString += minutesDiff + `M`;
-    }
+    const dateDiffString = formatDatesDifference(tripPoint.endDate - tripPoint.startDate);
 
     const additionalOptions = generateAdditionalOptions(tripPoint);
     return (
@@ -84,7 +58,7 @@ export default class TripPoint extends AbstractView {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${tripPoint.tripPointType.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)} ${tripPoint.destination}</h3>
+        <h3 class="event__title">${tripPoint.tripPointType[0].toUpperCase() + tripPoint.tripPointType.slice(1)} ${TRIP_POINTS_MAP.get(tripPoint.tripPointType)} ${tripPoint.destination.name}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -116,8 +90,9 @@ export default class TripPoint extends AbstractView {
     );
   }
 
-  _getTemplate() {
-    return this._createTripPointTemplate(this._tripPoint);
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 }
 

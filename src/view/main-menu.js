@@ -9,6 +9,19 @@ export default class MainMenu extends AbstractView {
     this._mainMenuClickHandler = this._mainMenuClickHandler.bind(this);
   }
 
+  _getTemplate() {
+    return this._createMainMenuTemplate();
+  }
+
+  getHeading() {
+    return createElement(`<h2 class="visually-hidden">Switch trip view</h2>`);
+  }
+
+  setMainMenuClickHandler(callback) {
+    this._callback.menuClick = callback;
+    this.getElement().addEventListener(`click`, this._mainMenuClickHandler);
+  }
+
   _createMainMenuTemplate() {
     return (
       `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -30,26 +43,5 @@ export default class MainMenu extends AbstractView {
 
       this._callback.menuClick(evt.target.dataset.name);
     }
-  }
-
-  setMainMenuClickHandler(callback) {
-    this._callback.menuClick = callback;
-    this.getElement().addEventListener(`click`, this._mainMenuClickHandler);
-  }
-
-  setMainMenuItem(menuItem) {
-    const item = this.getElement().querySelector(`[data-name=${menuItem}]`);
-
-    if (item !== null) {
-      item.checked = true;
-    }
-  }
-
-  _getTemplate() {
-    return this._createMainMenuTemplate();
-  }
-
-  getHeading() {
-    return createElement(`<h2 class="visually-hidden">Switch trip view</h2>`);
   }
 }
