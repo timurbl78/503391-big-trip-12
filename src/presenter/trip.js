@@ -161,12 +161,17 @@ export default class Trip {
   }
 
   _renderDay(numberOfDates, points) {
-    let day = new DayView(true, numberOfDates, points[0].startDate);
-    let tripEventsList = new TripEventsListView();
+    let day;
+    if (numberOfDates !== null) {
+      day = new DayView(true, numberOfDates, points[0].startDate);
+    } else {
+      day = new DayView(false);
+    }
+    const tripEventsList = new TripEventsListView();
     render(this._tripDaysList, day, RenderPosition.BEFOREEND);
     render(day, tripEventsList, RenderPosition.BEFOREEND);
     points.forEach((tripPoint) => {
-      let pointListElement = new PointListElement();
+      const pointListElement = new PointListElement();
       render(tripEventsList, pointListElement, RenderPosition.BEFOREEND);
       this._renderTripPoint(pointListElement, tripPoint);
     });
@@ -176,17 +181,7 @@ export default class Trip {
     const tripPoints = this._getTasks().slice();
 
     if (this._currentSortType !== SortType.EVENT) {
-      const day = new DayView(false);
-      const tripEventsList = new TripEventsListView();
-
-      render(this._tripDaysList, day, RenderPosition.BEFOREEND);
-      render(day, tripEventsList, RenderPosition.BEFOREEND);
-
-      tripPoints.forEach((tripPoint) => {
-        let pointListElement = new PointListElement();
-        render(tripEventsList, pointListElement, RenderPosition.BEFOREEND);
-        this._renderTripPoint(pointListElement, tripPoint);
-      });
+      this._renderDay(null, tripPoints);
     } else {
       let sameDayPoints = [tripPoints[0]];
       let numberOfDates = 1;

@@ -29,7 +29,7 @@ const createEventActivityBlock = (tripPoint) => {
   let block = ``;
 
   for (let i = 0; i < TRIP_POINT_ACTIVITIES_TYPE.length; i++) {
-    let type = TRIP_POINT_ACTIVITIES_TYPE[i];
+    const type = TRIP_POINT_ACTIVITIES_TYPE[i];
     block +=
       `<div class="event__type-item">
         <input id="event-type-${type}-${tripPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
@@ -43,7 +43,7 @@ const createEventActivityBlock = (tripPoint) => {
 const createEventTransferBlock = (tripPoint) => {
   let block = ``;
   for (let i = 0; i < TRIP_POINT_TRANSFER_TYPES.length; i++) {
-    let type = TRIP_POINT_TRANSFER_TYPES[i];
+    const type = TRIP_POINT_TRANSFER_TYPES[i];
     block +=
       `<div class="event__type-item">
         <input id="event-type-${type}-${tripPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${tripPoint.tripPointType === type ? `checked` : ``}>
@@ -359,9 +359,9 @@ export default class TripPointEdit extends SmartView {
 
   _offerCheckBoxHandler(evt) {
     evt.preventDefault();
-    let offers = [];
+    const offers = [];
     for (let i = 0; i < this._data.offers.length; i++) {
-      let option = this._data.offers[i];
+      const option = this._data.offers[i];
 
       if (`event-offer-` + option.title.toLowerCase().split(` `).join(`-`) === evt.target.name) {
         evt.target.checked = !evt.target.checked;
