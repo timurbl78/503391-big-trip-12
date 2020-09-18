@@ -1,3 +1,10 @@
+const Time = {
+  HOURS: 24,
+  MINUTES: 60,
+  SECONDS: 60,
+  MILLISECONDS: 1000
+};
+
 export const sortByDate = (pointA, pointB) => {
   return (pointB.endDate.getTime() - pointB.startDate.getTime()) - (pointA.endDate.getTime() - pointA.startDate.getTime());
 };
@@ -11,11 +18,11 @@ export const sortByEvent = (pointA, pointB) => {
 };
 
 export const formatDatesDifference = (dateDiff) => {
-  const daysDiff = Math.floor(dateDiff / (24 * 60 * 60 * 1000));
-  dateDiff -= daysDiff * (24 * 60 * 60 * 1000);
-  const hoursDiff = Math.floor(dateDiff / (1000 * 60 * 60));
-  dateDiff -= hoursDiff * (60 * 60 * 1000);
-  const minutesDiff = Math.floor(dateDiff / (60 * 1000));
+  const daysDiff = Math.floor(dateDiff / (Time.HOURS * Time.MINUTES * Time.SECONDS * Time.MILLISECONDS));
+  dateDiff -= daysDiff * (Time.HOURS * Time.MINUTES * Time.SECONDS * Time.MILLISECONDS);
+  const hoursDiff = Math.floor(dateDiff / (Time.MINUTES * Time.SECONDS * Time.MILLISECONDS));
+  dateDiff -= hoursDiff * (Time.MINUTES * Time.SECONDS * Time.MILLISECONDS);
+  const minutesDiff = Math.floor(dateDiff / (Time.SECONDS * Time.MILLISECONDS));
 
   let dateDiffString = ``;
   if (daysDiff) {

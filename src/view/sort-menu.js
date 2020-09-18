@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-import {SortType} from "../const";
+import {SortType, TagName} from "../const";
 
 export default class SortMenu extends AbstractView {
   constructor(currentSortType) {
@@ -50,7 +50,7 @@ export default class SortMenu extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `INPUT`) {
+    if (evt.target.tagName !== TagName.INPUT) {
       return;
     }
 

@@ -1,12 +1,6 @@
 import {FilterType} from "../const";
 import moment from "moment";
 
-export const filter = {
-  [FilterType.EVERYTHING]: (tasks) => tasks,
-  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.startDate)),
-  [FilterType.PAST]: (points) => points.filter((point) => isPointPast(point.endDate))
-};
-
 const isPointFuture = (startDate) => {
   const currentDate = new Date();
 
@@ -19,3 +13,8 @@ const isPointPast = (endDate) => {
   return moment(currentDate).isAfter(endDate, `day`);
 };
 
+export const filter = {
+  [FilterType.EVERYTHING]: (tasks) => tasks,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.startDate)),
+  [FilterType.PAST]: (points) => points.filter((point) => isPointPast(point.endDate))
+};

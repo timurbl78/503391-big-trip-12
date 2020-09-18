@@ -5,9 +5,9 @@ import TripEventsListView from "../view/trip-events-list";
 import PointListElement from "../view/point-list-element";
 import NoPointsView from "../view/no-points";
 import LoadingView from "../view/loading";
-import TripPointPresenter, {State as PointPresenterViewState} from "./trip-point";
+import TripPointPresenter from "./trip-point";
 import PointNewPresenter from "./point-new";
-import {SortType, UpdateType, UserAction, FilterType} from "../const";
+import {SortType, UpdateType, UserAction, FilterType, State as PointPresenterViewState} from "../const";
 import {filter} from "../utils/filter.js";
 import {sortByEvent, sortByPrice, sortByDate} from "../utils/point";
 import {render, RenderPosition, remove} from "../utils/render.js";
@@ -254,8 +254,11 @@ export default class Trip {
     this._renderBoard();
   }
 
-  _handleModelEvent(updateType) {
+  _handleModelEvent(updateType, data) {
     switch (updateType) {
+      case UpdateType.PATCH:
+        this._tripPointPresenter[data.id].init(data);
+        break;
       case UpdateType.MINOR:
         this._clearBoard();
         this._renderBoard();

@@ -1,6 +1,6 @@
 import AbstractView from "./abstract";
 import {createElement} from "../utils/render";
-import {MenuItem} from "../const";
+import {MenuItem, TagName} from "../const";
 
 export default class MainMenu extends AbstractView {
   constructor() {
@@ -33,7 +33,7 @@ export default class MainMenu extends AbstractView {
 
   _mainMenuClickHandler(evt) {
     evt.preventDefault();
-    if (evt.target.tagName === `A`) {
+    if (evt.target.tagName === TagName.A) {
       evt.target.classList.add(`trip-tabs__btn--active`);
       if (evt.target.dataset.name === MenuItem.TABLE) {
         this.getElement().querySelector(`[data-name=${MenuItem.STATS}]`).classList.remove(`trip-tabs__btn--active`);

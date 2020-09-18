@@ -1,17 +1,11 @@
 import TripPointView from "../view/trip-point";
 import TripPointEditView from "../view/trip-point-edit";
 import {render, replace, RenderPosition, remove} from "../utils/render";
-import {UserAction, UpdateType} from "../const.js";
+import {UserAction, UpdateType, State} from "../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`
-};
-
-export const State = {
-  SAVING: `SAVING`,
-  DELETING: `DELETING`,
-  ABORTING: `ABORTING`
 };
 
 export default class TripPoint {
@@ -27,6 +21,7 @@ export default class TripPoint {
     this._mode = Mode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDefaultClick = this._handleDefaultClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -59,7 +54,6 @@ export default class TripPoint {
 
     if (this._mode === Mode.EDITING) {
       replace(this._tripPointEditComponent, prevTripPointEditComponent);
-      this._mode = Mode.DEFAULT;
     }
 
     remove(prevTripPointComponent);
@@ -147,7 +141,7 @@ export default class TripPoint {
   _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_POINT,
-        UpdateType.MINOR,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._tripPoint,
