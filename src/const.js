@@ -33,3 +33,14 @@ export const MenuItem = {
   TABLE: `TABLE`,
   STATS: `STATS`
 };
+
+export const TagName = {
+  A: `A`,
+  INPUT: `INPUT`
+};
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};

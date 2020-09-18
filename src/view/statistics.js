@@ -7,7 +7,7 @@ import {OFFER_TYPE} from "../const";
 const BAR_HEIGHT = 55;
 
 const renderMoneyChart = (moneyCtx, data) => {
-  let map = new Map([
+  const map = new Map([
     [`TAXI`, 0],
     [`BUS`, 0],
     [`TRAIN`, 0],
@@ -21,9 +21,9 @@ const renderMoneyChart = (moneyCtx, data) => {
   ]);
 
   for (let i = 0; i < data.length; i++) {
-    let point = data[i];
+    const point = data[i];
     if (map.has(point.tripPointType.toUpperCase())) {
-      let value = map.get(point.tripPointType.toUpperCase());
+      const value = map.get(point.tripPointType.toUpperCase());
       map.set(point.tripPointType.toUpperCase(), value + point.cost);
     }
   }
@@ -96,7 +96,7 @@ const renderMoneyChart = (moneyCtx, data) => {
 };
 
 const renderTransportChart = (transportCtx, data) => {
-  let map = new Map([
+  const map = new Map([
     [`TAXI`, 0],
     [`BUS`, 0],
     [`TRAIN`, 0],
@@ -110,9 +110,9 @@ const renderTransportChart = (transportCtx, data) => {
   ]);
 
   for (let i = 0; i < data.length; i++) {
-    let point = data[i];
+    const point = data[i];
     if (map.has(point.tripPointType.toUpperCase())) {
-      let value = map.get(point.tripPointType.toUpperCase());
+      const value = map.get(point.tripPointType.toUpperCase());
       map.set(point.tripPointType.toUpperCase(), value + 1);
     }
   }
@@ -185,7 +185,7 @@ const renderTransportChart = (transportCtx, data) => {
 };
 
 const renderTimeChart = (timeCtx, data) => {
-  let map = new Map([
+  const map = new Map([
     [`TAXI`, 0],
     [`BUS`, 0],
     [`TRAIN`, 0],
@@ -199,9 +199,9 @@ const renderTimeChart = (timeCtx, data) => {
   ]);
 
   for (let i = 0; i < data.length; i++) {
-    let point = data[i];
+    const point = data[i];
     if (map.has(point.tripPointType.toUpperCase())) {
-      let value = map.get(point.tripPointType.toUpperCase());
+      const value = map.get(point.tripPointType.toUpperCase());
       map.set(point.tripPointType.toUpperCase(), value + (point.endDate - point.startDate));
     }
   }
