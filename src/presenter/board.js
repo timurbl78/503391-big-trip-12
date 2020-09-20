@@ -59,7 +59,7 @@ export default class Board {
     render(this._siteTripControlsElement, this._mainMenuElement.getElement(), RenderPosition.AFTERBEGIN);
     render(this._siteTripControlsElement, this._mainMenuElement.getHeading(), RenderPosition.AFTERBEGIN);
 
-    this._tripMainInfoPresenter = new TripMainInfoPresenter(this._siteTripMainElement);
+    this._tripMainInfoPresenter = new TripMainInfoPresenter(this._siteTripMainElement, this._pointsModel);
     this._tripMainInfoPresenter.init();
 
     this._mainMenuElement.setMainMenuClickHandler(this._handleSiteMenuClick);
