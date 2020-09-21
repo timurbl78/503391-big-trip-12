@@ -1,11 +1,14 @@
 import AbstractView from "./abstract";
 import {createElement} from "../utils/render";
+import {FilterType} from "../const";
+import {filter as filterFunction} from "../utils/filter";
 
 export default class Filters extends AbstractView {
-  constructor(filterItems, currentFilterType) {
+  constructor(filterItems, currentFilterType, points) {
     super();
     this._filterItems = filterItems;
     this._currentFilterType = currentFilterType;
+    this._points = points;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
@@ -26,15 +29,30 @@ export default class Filters extends AbstractView {
   _createFilterItemTemplate(filter) {
     const {type, name} = filter;
 
-    return (
-      `<div class="trip-filters__filter">
+    if (type === FilterType.EVERYTHING) {
+      return (
+        `<div class="trip-filters__filter">
         <input id="filter-${type}" class="trip-filters__filter-input visually-hidden"
          type="radio" name="trip-filter"
          ${type === this._currentFilterType ? `checked` : ``}
          value="${type}">
         <label class="trip-filters__filter-label" for="filter-${type}">${name}</label>
       </div>`
-    );
+      );
+    } else {
+      const points = filterFunction[filter.type](this._points);
+
+      return (
+        `<div class="trip-filters__filter">
+        <input id="filter-${type}" class="trip-filters__filter-input visually-hidden"
+         type="radio" name="trip-filter"
+         ${type === this._currentFilterType ? `checked` : ``}
+         value="${type}"
+         ${points.length ? `` : `disabled`}>
+        <label class="trip-filters__filter-label" for="filter-${type}">${name}</label>
+      </div>`
+      );
+    }
   }
 
   _createFiltersTemplate() {
