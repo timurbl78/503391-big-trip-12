@@ -27042,7 +27042,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const AUTHORIZATION = `Basic hS2sd3dfSf4dEsa2j`;
+const AUTHORIZATION = `Basic hS2sd3wfSf4dEsa2j`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 const StoreType = {
   POINTS: `points`,
